@@ -5,11 +5,13 @@ const userModel = require("../models/userModel");
 
 // Register User
 exports.register = async (req, res) => {
+  console.log("Received registration:", req.body); //error handling
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
-  const { username, email, password } = req.body;
+  const { full_name, email, password, secondary_school, secondary_level } =
+    req.body;
 
   try {
     const existingUser = await userModel.findUserByEmail(email);
@@ -18,7 +20,13 @@ exports.register = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = await userModel.createUser(username, email, hashedPassword);
+    const newUser = await userModel.createUser(
+      full_name,
+      email,
+      hashedPassword,
+      secondary_school,
+      secondary_level
+    );
     res
       .status(201)
       .json({ message: "User registered successfully", user: newUser });
@@ -45,7 +53,7 @@ exports.login = async (req, res) => {
       return res.status(401).json({ message: "Invalid email or password" });
 
     const token = jwt.sign(
-      { id: user.id, email: user.email },
+      { id: user.id, email: user.email, role: user.role }, // ✅ include role here
       process.env.JWT_SECRET_KEY,
       {
         expiresIn: process.env.JWT_EXPIRES_IN,

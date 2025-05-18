@@ -8,9 +8,9 @@ const router = express.Router();
 router.post(
   "/register",
   [
-    body("username")
+    body("full_name")
       .isLength({ min: 3 })
-      .withMessage("Username must be at least 3 characters"),
+      .withMessage("Name must be at least 3 characters"),
     body("email").isEmail().withMessage("Invalid email format"),
     body("password")
       .isLength({ min: 6 })

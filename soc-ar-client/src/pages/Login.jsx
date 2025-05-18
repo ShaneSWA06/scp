@@ -1,7 +1,9 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function Login() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -13,6 +15,7 @@ function Login() {
         password,
       });
       alert("Login successful!");
+      navigate("/"); // ⬅ Redirects to Home
       localStorage.setItem("token", res.data.token);
     } catch (err) {
       alert("Login failed. Please check your credentials.");
@@ -21,8 +24,11 @@ function Login() {
 
   return (
     <div
-      className="d-flex justify-content-center align-items-center bg-light"
-      style={{ height: "80vh" }}
+      style={{
+        background: "linear-gradient(135deg, #e3f2fd, #90caf9)",
+        minHeight: "100vh",
+      }}
+      className="d-flex justify-content-center align-items-center"
     >
       <div
         className="p-5 bg-white rounded shadow"

@@ -1,68 +1,150 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { validationResult } = require("express-validator");
-const userModel = require("../models/userModel");
+const pool = require("../config/db");
 
-// Register User
+// Register new user
 exports.register = async (req, res) => {
-  console.log("Received registration:", req.body); //error handling
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
+
   const { full_name, email, password, secondary_school, secondary_level } =
     req.body;
 
   try {
-    const existingUser = await userModel.findUserByEmail(email);
-    if (existingUser) {
-      return res.status(400).json({ message: "Email already exists" });
+    // Check if user already exists
+    const existingUser = await pool.query(
+      "SELECT id FROM users WHERE email = $1",
+      [email]
+    );
+
+    if (existingUser.rows.length > 0) {
+      return res.status(400).json({ message: "User already exists" });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = await userModel.createUser(
-      full_name,
-      email,
-      hashedPassword,
-      secondary_school,
-      secondary_level
+    // Hash password
+    const salt = await bcrypt.genSalt(12);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    // Create user (default role is 'user')
+    const result = await pool.query(
+      `INSERT INTO users (email, password, full_name, secondary_school, secondary_level, role)
+       VALUES ($1, $2, $3, $4, $5, 'user') RETURNING id, email, full_name, role`,
+      [email, hashedPassword, full_name, secondary_school, secondary_level]
     );
-    res
-      .status(201)
-      .json({ message: "User registered successfully", user: newUser });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+
+    const user = result.rows[0];
+
+    // Generate JWT token
+    const token = jwt.sign(
+      {
+        id: user.id,
+        email: user.email,
+        role: user.role,
+        full_name: user.full_name,
+      },
+      process.env.JWT_SECRET_KEY,
+      { expiresIn: process.env.JWT_EXPIRES_IN || "24h" }
+    );
+
+    res.status(201).json({
+      message: "User registered successfully",
+      token,
+      user: {
+        id: user.id,
+        email: user.email,
+        full_name: user.full_name,
+        role: user.role,
+      },
+    });
+  } catch (error) {
+    console.error("Registration error:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
-// Login User
+// Login user
 exports.login = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
+
   const { email, password } = req.body;
 
   try {
-    const user = await userModel.findUserByEmail(email);
-    if (!user)
-      return res.status(401).json({ message: "Invalid email or password" });
-
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch)
-      return res.status(401).json({ message: "Invalid email or password" });
-
-    const token = jwt.sign(
-      { id: user.id, email: user.email, role: user.role }, // ✅ include role here
-      process.env.JWT_SECRET_KEY,
-      {
-        expiresIn: process.env.JWT_EXPIRES_IN,
-        algorithm: process.env.JWT_ALGORITHM || "HS256",
-      }
+    // Find user by email
+    const result = await pool.query(
+      "SELECT id, email, password, full_name, role FROM users WHERE email = $1",
+      [email]
     );
 
-    res.json({ message: "Login successful", token });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    if (result.rows.length === 0) {
+      return res.status(400).json({ message: "Invalid credentials" });
+    }
+
+    const user = result.rows[0];
+
+    // Check password
+    const isValidPassword = await bcrypt.compare(password, user.password);
+    if (!isValidPassword) {
+      return res.status(400).json({ message: "Invalid credentials" });
+    }
+
+    // Generate JWT token with role
+    const token = jwt.sign(
+      {
+        id: user.id,
+        email: user.email,
+        role: user.role,
+        full_name: user.full_name,
+      },
+      process.env.JWT_SECRET_KEY,
+      { expiresIn: process.env.JWT_EXPIRES_IN || "24h" }
+    );
+
+    // Log login activity for admins
+    if (user.role === "admin") {
+      console.log(
+        `🔐 Admin login: ${user.email} at ${new Date().toISOString()}`
+      );
+    }
+
+    res.json({
+      message: "Login successful",
+      token,
+      user: {
+        id: user.id,
+        email: user.email,
+        full_name: user.full_name,
+        role: user.role,
+      },
+    });
+  } catch (error) {
+    console.error("Login error:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+// Get user profile (requires authentication)
+exports.getProfile = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const result = await pool.query(
+      "SELECT id, email, full_name, secondary_school, secondary_level, role, registered_at FROM users WHERE id = $1",
+      [userId]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error("Get profile error:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };

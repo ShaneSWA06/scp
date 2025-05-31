@@ -1,98 +1,187 @@
-import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
-import "./Navbar.css"; // You'll create this
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import "./Navbar.css";
 
 function Navbar() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const token = localStorage.getItem("token");
-  const navbarOpen = useState(false);
 
   let role = null;
+  let userName = null;
+
+  // Debug: Log token info
+  console.log("Token:", token);
 
   if (token) {
     try {
       const decoded = JSON.parse(atob(token.split(".")[1]));
       role = decoded.role;
+      userName = decoded.full_name || decoded.email;
+      console.log("Decoded user:", { role, userName });
     } catch (err) {
-      console.error("Invalid token");
+      console.error("Invalid token:", err);
     }
   }
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    navigate("/login");
+    navigate("/");
+    alert("Logged out!");
   };
 
+  const isAdminPage = location.pathname.startsWith("/admin");
+  console.log("Is admin page:", isAdminPage);
+  console.log("Current path:", location.pathname);
+
   return (
-    <nav
-      className="navbar navbar-expand-lg navbar-dark"
-      style={{ backgroundColor: "#0d6efd" }}
-    >
-      <div className="container">
-        <Link className="navbar-brand fs-4 fw-semibold" to="/">
-          SoC AR
+    <nav className="navbar">
+      <div className="navbar-container">
+        {/* Logo */}
+        <Link to="/" className="navbar-logo">
+          <div className="logo-icon">
+            <div className="lightning">⚡</div>
+          </div>
+          <span className="logo-text">SoC AR</span>
         </Link>
 
-        {/* Hamburger Toggle Button */}
-        <button
-          className="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#mainNavbar"
-          aria-controls="mainNavbar"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span className="navbar-toggler-icon"></span>
-        </button>
+        {/* Desktop Menu */}
+        <div className="navbar-menu">
+          {/* Debug info */}
+          <div
+            style={{ color: "white", fontSize: "12px", marginRight: "1rem" }}
+          >
+            Role: {role || "none"} | Admin Page: {isAdminPage ? "yes" : "no"}
+          </div>
 
-        {/* Collapsible Section */}
-        <div
-          className={`collapse navbar-collapse justify-content-end ${
-            navbarOpen ? "show" : ""
-          }`}
-          id="mainNavbar"
-        >
-          <ul className="navbar-nav align-items-center">
-            <li className="nav-item">
-              <Link className="nav-link fs-5" to="/">
+          {/* Simple Navigation Logic */}
+          {role === "admin" && isAdminPage ? (
+            // Admin on admin pages
+            <>
+              <Link
+                to="/admin"
+                className="nav-link"
+                style={{ color: "#fbbf24" }}
+              >
+                🛡️ Admin Dashboard
+              </Link>
+              <Link to="/" className="nav-link" style={{ color: "#94a3b8" }}>
+                🏠 Back to Site
+              </Link>
+            </>
+          ) : (
+            // Everyone else or admin on regular pages
+            <>
+              <Link to="/" className="nav-link">
                 Home
               </Link>
-            </li>
-            {!token && (
+
+              {token ? (
+                <>
+                  <Link to="/quiz" className="nav-link">
+                    Explore Quiz
+                  </Link>
+                  <Link to="/badges" className="nav-link">
+                    Badge Collection
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link to="/login" className="nav-link">
+                    Explore Quiz 🔒
+                  </Link>
+                  <Link to="/login" className="nav-link">
+                    Badge Collection 🔒
+                  </Link>
+                </>
+              )}
+            </>
+          )}
+
+          {/* Auth Section */}
+          {!token ? (
+            <div className="auth-buttons">
+              <Link to="/login" className="nav-link">
+                Login
+              </Link>
+              <Link to="/signup" className="btn-signup">
+                Sign Up
+              </Link>
+            </div>
+          ) : (
+            <div className="user-menu">
+              {role === "admin" && !isAdminPage && (
+                <Link
+                  to="/admin"
+                  className="nav-link"
+                  style={{ color: "#fbbf24" }}
+                >
+                  Admin Panel
+                </Link>
+              )}
+
+              <div className="user-info">
+                <div className="user-avatar">
+                  <span>{role === "admin" ? "👑" : "👤"}</span>
+                </div>
+                <span className="user-name">
+                  {userName ? userName.split(" ")[0] : "User"}
+                </span>
+              </div>
+
+              <button onClick={handleLogout} className="btn-logout">
+                Logout
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Mobile Menu Button */}
+        <button
+          className="mobile-menu-btn"
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+        >
+          ☰
+        </button>
+      </div>
+
+      {/* Mobile Menu */}
+      {mobileMenuOpen && (
+        <div className="mobile-menu active">
+          <div className="mobile-menu-content">
+            <Link to="/" onClick={() => setMobileMenuOpen(false)}>
+              🏠 Home
+            </Link>
+
+            {token ? (
               <>
-                <li className="nav-item">
-                  <Link className="nav-link fs-5" to="/login">
-                    Login
+                <Link to="/quiz" onClick={() => setMobileMenuOpen(false)}>
+                  🧠 Explore Quiz
+                </Link>
+                <Link to="/badges" onClick={() => setMobileMenuOpen(false)}>
+                  🏅 Badge Collection
+                </Link>
+                {role === "admin" && (
+                  <Link to="/admin" onClick={() => setMobileMenuOpen(false)}>
+                    ⚡ Admin Panel
                   </Link>
-                </li>
-                <li className="nav-item">
-                  <Link className="nav-link fs-5" to="/signup">
-                    Sign Up
-                  </Link>
-                </li>
+                )}
+                <button onClick={handleLogout}>Logout</button>
+              </>
+            ) : (
+              <>
+                <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
+                  🔐 Login
+                </Link>
+                <Link to="/signup" onClick={() => setMobileMenuOpen(false)}>
+                  ✨ Sign Up
+                </Link>
               </>
             )}
-            {role === "admin" && (
-              <li className="nav-item">
-                <Link className="nav-link fs-5 text-warning" to="/admin">
-                  Admin
-                </Link>
-              </li>
-            )}
-            {token && (
-              <li className="nav-item ms-lg-2 mt-2 mt-lg-0">
-                <button
-                  onClick={handleLogout}
-                  className="btn btn-sm btn-light text-danger fw-semibold"
-                >
-                  Sign Out
-                </button>
-              </li>
-            )}
-          </ul>
+          </div>
         </div>
-      </div>
+      )}
     </nav>
   );
 }

@@ -1,8 +1,34 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import DOMPurify from "dompurify";
 import "./AdminPanel.css"; // Import your CSS styles
 import "../index.css";
+
+const sanitizeContent = (content) => {
+  if (!content) return "";
+  return DOMPurify.sanitize(content, {
+    ALLOWED_TAGS: [],
+    ALLOWED_ATTR: [],
+    KEEP_CONTENT: true,
+  });
+};
+
+const validateInput = (value) => {
+  const dangerousPatterns = [
+    /<script/i,
+    /javascript:/i,
+    /on\w+=/i,
+    /<iframe/i,
+    /<object/i,
+    /<embed/i,
+  ];
+
+  if (dangerousPatterns.some((pattern) => pattern.test(value))) {
+    return "Input contains potentially dangerous content";
+  }
+  return null;
+};
 
 function AdminPanel() {
   const navigate = useNavigate();
@@ -178,6 +204,19 @@ function AdminPanel() {
   const handleMilestoneSubmit = async (e) => {
     e.preventDefault();
 
+    const titleError = validateInput(milestoneForm.title);
+    const descError = validateInput(milestoneForm.description);
+
+    if (titleError) {
+      alert(titleError);
+      return;
+    }
+
+    if (descError) {
+      alert(descError);
+      return;
+    }
+
     try {
       await secureApiRequest(async (config) => {
         if (editingId) {
@@ -238,6 +277,24 @@ function AdminPanel() {
   // Quiz CRUD operations with security
   const handleQuizSubmit = async (e) => {
     e.preventDefault();
+
+    const questionError = validateInput(quizForm.question);
+    const answerErrors = [
+      validateInput(quizForm.correct_answer),
+      validateInput(quizForm.wrong_answer_1),
+      validateInput(quizForm.wrong_answer_2),
+      validateInput(quizForm.wrong_answer_3),
+    ].filter((error) => error !== null);
+
+    if (questionError) {
+      alert(questionError);
+      return;
+    }
+
+    if (answerErrors.length > 0) {
+      alert(answerErrors[0]);
+      return;
+    }
 
     try {
       await secureApiRequest(async (config) => {
@@ -487,13 +544,30 @@ function AdminPanel() {
                         className="border-b border-white/10 hover:bg-white/5"
                       >
                         <td className="px-6 py-4 text-white">
-                          {milestone.title}
+                          {sanitizeContent(milestone.title)}
                         </td>
                         <td className="px-6 py-4 text-gray-300">
                           {milestone.year}
                         </td>
                         <td className="px-6 py-4 text-gray-300 font-mono text-sm">
                           {milestone.marker_id}
+                        </td>
+                        <td className="px-6 py-4">
+                          {milestone.media_url ? (
+                            <img
+                              src={milestone.media_url}
+                              alt={milestone.title}
+                              className="w-16 h-16 object-cover rounded-lg border border-white/20"
+                              onError={(e) => {
+                                e.target.src =
+                                  'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg>';
+                              }}
+                            />
+                          ) : (
+                            <span className="text-gray-500 text-sm">
+                              No media
+                            </span>
+                          )}
                         </td>
                         <td className="px-6 py-4">
                           <button

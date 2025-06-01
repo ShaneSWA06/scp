@@ -16,6 +16,13 @@ const createTables = async () => {
 
     // Create tables with ALL required columns
     await client.query(`
+      DROP TABLE IF EXISTS admin_logs CASCADE;
+  DROP TABLE IF EXISTS badges CASCADE;
+  DROP TABLE IF EXISTS quiz_attempts CASCADE;
+  DROP TABLE IF EXISTS user_progress CASCADE;
+  DROP TABLE IF EXISTS quizzes CASCADE;
+  DROP TABLE IF EXISTS milestones CASCADE;
+  DROP TABLE IF EXISTS users CASCADE;
       CREATE TABLE IF NOT EXISTS users (
         id SERIAL PRIMARY KEY,
         email VARCHAR(100) UNIQUE NOT NULL,

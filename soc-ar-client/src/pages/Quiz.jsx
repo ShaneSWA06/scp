@@ -1,9 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import DOMPurify from "dompurify";
 import "./Features.css";
 
+const sanitizeContent = (content) => {
+  if (!content) return "";
+  return DOMPurify.sanitize(content, {
+    ALLOWED_TAGS: [], // No HTML tags allowed
+    ALLOWED_ATTR: [],
+    KEEP_CONTENT: true, // Keep text content only
+  });
+};
+
 const Quiz = () => {
+  const token = localStorage.getItem("token");
   const navigate = useNavigate();
   const [currentQuiz, setCurrentQuiz] = useState(null);
   const [selectedAnswer, setSelectedAnswer] = useState("");
@@ -15,8 +26,6 @@ const Quiz = () => {
   const [loading, setLoading] = useState(true);
   const [userStats, setUserStats] = useState(null);
   const [startTime, setStartTime] = useState(null);
-
-  const token = localStorage.getItem("token");
 
   // Check authentication on component mount
   useEffect(() => {
@@ -30,14 +39,44 @@ const Quiz = () => {
     fetchUserStats();
   }, [token, navigate]);
 
+  const isNewQuiz = (createdAt) => {
+    if (!createdAt) return false;
+    try {
+      const created = new Date(createdAt);
+      const now = new Date();
+      const hoursDiff = (now - created) / (1000 * 60 * 60);
+      return hoursDiff < 24; // Mark as new if created within 24 hours
+    } catch (error) {
+      console.error("Error checking if quiz is new:", error);
+      return false;
+    }
+  };
+
   // Fetch quiz data from backend
   const fetchQuizData = async () => {
     try {
       setLoading(true);
-      const response = await axios.get("http://localhost:5000/quizzes");
-      const quizzes = response.data;
+      console.log("🔄 Fetching latest quizzes...");
 
-      // Transform backend data to frontend format
+      // GET TOKEN FROM LOCALSTORAGE
+      const token = localStorage.getItem("token");
+      if (!token) {
+        console.error("No authentication token found");
+        navigate("/login");
+        return;
+      }
+
+      // ADD AUTHORIZATION HEADER
+      const response = await axios.get("http://localhost:5000/quizzes", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const quizzes = response.data;
+      console.log(`📊 Loaded ${quizzes.length} quizzes from admin`);
+
+      // Your existing transformation code...
       const transformedQuizzes = quizzes.map((quiz) => ({
         id: quiz.id,
         milestone: `${quiz.milestone_title} (${quiz.milestone_year})`,
@@ -47,17 +86,22 @@ const Quiz = () => {
           quiz.wrong_answer_1,
           quiz.wrong_answer_2,
           quiz.wrong_answer_3,
-        ].sort(() => Math.random() - 0.5), // Shuffle options
+        ].sort(() => Math.random() - 0.5),
         correctAnswer: quiz.correct_answer,
-        explanation: `${quiz.milestone_title}: This milestone occurred in ${quiz.milestone_year}.`,
+        explanation: `${quiz.milestone_title}: This milestone occurred in ${
+          quiz.milestone_year
+        }. ${quiz.milestone_description || ""}`,
         timePeriod: quiz.time_period || getTimePeriod(quiz.milestone_year),
         difficulty: getDifficulty(quiz.milestone_year),
         milestoneId: quiz.milestone_id,
+        createdAt: quiz.quiz_created_at,
+        isNew: isNewQuiz(quiz.quiz_created_at),
+        media_url: quiz.media_url || null,
       }));
 
       setQuizData(transformedQuizzes);
 
-      // Fetch user progress
+      // Fetch user progress if authenticated
       if (token) {
         try {
           const progressResponse = await axios.get(
@@ -70,13 +114,23 @@ const Quiz = () => {
             (attempt) => attempt.quiz_id
           );
           setCompletedQuizzes(completedIds);
+
+          console.log(`✅ User has completed ${completedIds.length} quizzes`);
         } catch (err) {
           console.log("No progress data yet");
         }
       }
     } catch (error) {
       console.error("Error fetching quiz data:", error);
-      alert("Error loading quiz data. Please try again.");
+
+      // Handle specific authentication errors
+      if (error.response?.status === 401) {
+        alert("Your session has expired. Please login again.");
+        localStorage.removeItem("token");
+        navigate("/login");
+      } else {
+        alert("Error loading quiz data. Please try again.");
+      }
     } finally {
       setLoading(false);
     }
@@ -84,6 +138,7 @@ const Quiz = () => {
 
   // Fetch user statistics
   const fetchUserStats = async () => {
+    const token = localStorage.getItem("token");
     if (!token) return;
 
     try {
@@ -93,6 +148,10 @@ const Quiz = () => {
       setUserStats(response.data);
     } catch (error) {
       console.log("No stats available yet");
+      if (error.response?.status === 401) {
+        localStorage.removeItem("token");
+        navigate("/login");
+      }
     }
   };
 
@@ -122,8 +181,14 @@ const Quiz = () => {
   const submitAnswer = async () => {
     if (!selectedAnswer || !token) return;
 
+    if (!token) {
+      alert("Please login to submit answers");
+      navigate("/login");
+      return;
+    }
+
     try {
-      const timeTaken = Math.floor((Date.now() - startTime) / 1000); // seconds
+      const timeTaken = Math.floor((Date.now() - startTime) / 1000);
 
       const response = await axios.post(
         "http://localhost:5000/quizzes/submit",
@@ -137,6 +202,7 @@ const Quiz = () => {
         }
       );
 
+      // Your existing result handling code...
       const result = response.data;
       setIsCorrect(result.isCorrect);
       setShowResult(true);
@@ -148,24 +214,41 @@ const Quiz = () => {
         }
       }
 
-      // Refresh user stats
+      // Refresh user stats and check for badges
       fetchUserStats();
 
       // Check for new badges
       try {
-        await axios.post(
+        const badgeResponse = await axios.post(
           "http://localhost:5000/badges/check",
           {},
           {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
+
+        if (
+          badgeResponse.data.newBadges &&
+          badgeResponse.data.newBadges.length > 0
+        ) {
+          setTimeout(() => {
+            alert(
+              `🏆 CONGRATULATIONS! You've earned ${badgeResponse.data.newBadges.length} new badge(s)!`
+            );
+          }, 1000);
+        }
       } catch (err) {
         console.log("Badge check error:", err);
       }
     } catch (error) {
       console.error("Error submitting answer:", error);
-      alert("Error submitting answer. Please try again.");
+      if (error.response?.status === 401) {
+        alert("Your session has expired. Please login again.");
+        localStorage.removeItem("token");
+        navigate("/login");
+      } else {
+        alert("Error submitting answer. Please try again.");
+      }
     }
   };
 
@@ -341,7 +424,9 @@ const Quiz = () => {
               </div>
 
               <div className="question-content">
-                <h2 className="question-text">{currentQuiz.question}</h2>
+                <h2 className="question-text">
+                  {sanitizeContent(currentQuiz.question)}
+                </h2>
 
                 {!showResult ? (
                   <div className="answer-options">
@@ -356,7 +441,9 @@ const Quiz = () => {
                         <span className="option-letter">
                           {String.fromCharCode(65 + index)}
                         </span>
-                        <span className="option-text">{option}</span>
+                        <span className="option-text">
+                          {sanitizeContent(option)}
+                        </span>
                       </button>
                     ))}
 

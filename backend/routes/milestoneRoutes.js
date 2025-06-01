@@ -5,7 +5,7 @@ const authenticateToken = require("../middleware/authMiddleware");
 const isAdmin = require("../middleware/isAdmin");
 
 // Get all milestones
-router.get("/", async (req, res) => {
+router.get("/", authenticateToken, async (req, res) => {
   try {
     const result = await pool.query(`
       SELECT * FROM milestones 
@@ -122,18 +122,50 @@ router.post("/", authenticateToken, isAdmin, async (req, res) => {
       });
     }
 
+    // Validate lengths
+    if (title.length < 3 || title.length > 100) {
+      return res.status(400).json({
+        error: "Title must be between 3 and 100 characters",
+      });
+    }
+
+    if (description.length < 10 || description.length > 1000) {
+      return res.status(400).json({
+        error: "Description must be between 10 and 1000 characters",
+      });
+    }
+
+    // Check for dangerous patterns
+    const dangerousPatterns = [
+      /&lt;script/i,
+      /javascript:/i,
+      /&lt;iframe/i,
+      /&lt;object/i,
+    ];
+
+    if (
+      dangerousPatterns.some(
+        (pattern) => pattern.test(title) || pattern.test(description)
+      )
+    ) {
+      return res.status(400).json({
+        error: "Content contains potentially dangerous elements",
+      });
+    }
+    // END VALIDATION BLOCK
+
+    // Your existing database insert code (keep as is):
     const result = await pool.query(
-      `
-      INSERT INTO milestones (title, year, description, media_url, marker_id)
-      VALUES ($1, $2, $3, $4, $5) RETURNING *
-    `,
-      [title, year, description, media_url, marker_id]
+      `INSERT INTO milestones (title, year, description, media_url, marker_id)
+       VALUES ($1, $2, $3, $4, $5) RETURNING *`,
+      [title, year, description, media_url || "", marker_id]
     );
 
+    // Your existing logging and response code...
     res.status(201).json(result.rows[0]);
   } catch (err) {
+    // Your existing error handling...
     if (err.code === "23505") {
-      // Unique violation
       return res.status(400).json({ error: "Marker ID already exists" });
     }
     console.error("Error creating milestone:", err);

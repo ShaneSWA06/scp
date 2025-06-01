@@ -4,8 +4,25 @@ const pool = require("../config/db");
 const authenticateToken = require("../middleware/authMiddleware");
 const isAdmin = require("../middleware/isAdmin");
 
+const he = require("he");
+
+const sanitizeOutput = (text) => {
+  if (!text) return "";
+
+  // Decode unicode escapes and then encode HTML
+  let decoded = text.replace(/\\u([0-9A-Fa-f]{4})/g, (match, p1) => {
+    return String.fromCharCode(parseInt(p1, 16));
+  });
+
+  // Remove any remaining HTML tags
+  decoded = decoded.replace(/<[^>]*>/g, "");
+
+  // HTML encode for safety
+  return he.encode(decoded);
+};
+
 // Get all quizzes with milestone information
-router.get("/", async (req, res) => {
+router.get("/", authenticateToken, async (req, res) => {
   try {
     const result = await pool.query(`
       SELECT 
@@ -25,10 +42,25 @@ router.get("/", async (req, res) => {
       ORDER BY m.year ASC, q.id ASC
     `);
 
-    res.json(result.rows);
+    // Sanitize all output data
+    const sanitizedQuizzes = result.rows.map((quiz) => ({
+      ...quiz,
+      question: sanitizeOutput(quiz.question),
+      correct_answer: sanitizeOutput(quiz.correct_answer),
+      wrong_answer_1: sanitizeOutput(quiz.wrong_answer_1),
+      wrong_answer_2: sanitizeOutput(quiz.wrong_answer_2),
+      wrong_answer_3: sanitizeOutput(quiz.wrong_answer_3),
+      milestone_title: sanitizeOutput(quiz.milestone_title),
+      milestone_description: sanitizeOutput(quiz.milestone_description),
+    }));
+
+    console.log(
+      `✅ Serving ${sanitizedQuizzes.length} sanitized quizzes to authenticated user`
+    );
+    res.json(sanitizedQuizzes);
   } catch (err) {
     console.error("Error fetching quizzes:", err);
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: "Failed to load quizzes" });
   }
 });
 
@@ -211,37 +243,62 @@ router.post("/", authenticateToken, isAdmin, async (req, res) => {
   } = req.body;
 
   try {
+    // Sanitize inputs
+    const sanitizedData = {
+      milestone_id,
+      question: he.encode(question || ""),
+      correct_answer: he.encode(correct_answer || ""),
+      wrong_answer_1: he.encode(wrong_answer_1 || ""),
+      wrong_answer_2: he.encode(wrong_answer_2 || ""),
+      wrong_answer_3: he.encode(wrong_answer_3 || ""),
+    };
+
+    // Validation
+    if (!sanitizedData.question || sanitizedData.question.length < 5) {
+      return res
+        .status(400)
+        .json({ error: "Question is required (min 5 characters)" });
+    }
+
+    // Check for dangerous patterns even in encoded form
+    const dangerousPatterns = [
+      /script/i,
+      /javascript/i,
+      /onload/i,
+      /onerror/i,
+      /onclick/i,
+      /iframe/i,
+    ];
+
+    const allInputs = Object.values(sanitizedData);
     if (
-      !milestone_id ||
-      !question ||
-      !correct_answer ||
-      !wrong_answer_1 ||
-      !wrong_answer_2 ||
-      !wrong_answer_3
+      allInputs.some((input) =>
+        dangerousPatterns.some((pattern) => pattern.test(input))
+      )
     ) {
-      return res.status(400).json({
-        error:
-          "All fields are required: milestone_id, question, correct_answer, wrong_answer_1, wrong_answer_2, wrong_answer_3",
-      });
+      return res
+        .status(400)
+        .json({ error: "Content contains potentially dangerous elements" });
     }
 
     const result = await pool.query(
       `INSERT INTO quizzes (milestone_id, question, correct_answer, wrong_answer_1, wrong_answer_2, wrong_answer_3)
        VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
       [
-        milestone_id,
-        question,
-        correct_answer,
-        wrong_answer_1,
-        wrong_answer_2,
-        wrong_answer_3,
+        sanitizedData.milestone_id,
+        sanitizedData.question,
+        sanitizedData.correct_answer,
+        sanitizedData.wrong_answer_1,
+        sanitizedData.wrong_answer_2,
+        sanitizedData.wrong_answer_3,
       ]
     );
 
+    console.log("✅ Created sanitized quiz:", result.rows[0]);
     res.status(201).json(result.rows[0]);
   } catch (err) {
     console.error("Error creating quiz:", err);
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: "Failed to create quiz" });
   }
 });
 

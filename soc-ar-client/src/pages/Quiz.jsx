@@ -76,11 +76,12 @@ const Quiz = () => {
       const quizzes = response.data;
       console.log(`📊 Loaded ${quizzes.length} quizzes from admin`);
 
-      // Your existing transformation code...
+      // Transform quizzes with milestone media support
       const transformedQuizzes = quizzes.map((quiz) => ({
         id: quiz.id,
         milestone: `${quiz.milestone_title} (${quiz.milestone_year})`,
         question: quiz.question,
+        milestone_media_url: quiz.milestone_media_url, // Use milestone media instead of separate quiz images
         options: [
           quiz.correct_answer,
           quiz.wrong_answer_1,
@@ -96,7 +97,6 @@ const Quiz = () => {
         milestoneId: quiz.milestone_id,
         createdAt: quiz.quiz_created_at,
         isNew: isNewQuiz(quiz.quiz_created_at),
-        media_url: quiz.media_url || null,
       }));
 
       setQuizData(transformedQuizzes);
@@ -202,7 +202,7 @@ const Quiz = () => {
         }
       );
 
-      // Your existing result handling code...
+      // Handle quiz result
       const result = response.data;
       setIsCorrect(result.isCorrect);
       setShowResult(true);
@@ -370,6 +370,20 @@ const Quiz = () => {
                     </div>
                   </div>
 
+                  {/* Show milestone image in quiz selection */}
+                  {quiz.milestone_media_url && (
+                    <div className="quiz-card-image">
+                      <img
+                        src={quiz.milestone_media_url}
+                        alt={quiz.milestone}
+                        className="quiz-selection-image"
+                        onError={(e) => {
+                          e.target.style.display = "none";
+                        }}
+                      />
+                    </div>
+                  )}
+
                   <h3 className="quiz-milestone">{quiz.milestone}</h3>
 
                   <div className="quiz-card-footer">
@@ -427,6 +441,24 @@ const Quiz = () => {
                 <h2 className="question-text">
                   {sanitizeContent(currentQuiz.question)}
                 </h2>
+
+                {/* Display milestone image if exists */}
+                {currentQuiz.milestone_media_url && (
+                  <div className="quiz-image-container">
+                    <img
+                      src={currentQuiz.milestone_media_url}
+                      alt={`${currentQuiz.milestone} milestone`}
+                      className="quiz-image"
+                      onError={(e) => {
+                        e.target.style.display = "none";
+                        e.target.nextSibling.style.display = "block";
+                      }}
+                    />
+                    <div className="hidden text-gray-400 text-sm text-center mt-2">
+                      ⚠️ Image could not be loaded
+                    </div>
+                  </div>
+                )}
 
                 {!showResult ? (
                   <div className="answer-options">

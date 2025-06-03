@@ -30,6 +30,7 @@ router.get("/", authenticateToken, async (req, res) => {
         m.title as milestone_title,
         m.year as milestone_year,
         m.description as milestone_description,
+        m.media_url as milestone_media_url,
         CASE 
           WHEN m.year BETWEEN 1990 AND 1999 THEN '1990s'
           WHEN m.year BETWEEN 2000 AND 2009 THEN '2000s'
@@ -42,22 +43,10 @@ router.get("/", authenticateToken, async (req, res) => {
       ORDER BY m.year ASC, q.id ASC
     `);
 
-    // Sanitize all output data
-    const sanitizedQuizzes = result.rows.map((quiz) => ({
-      ...quiz,
-      question: sanitizeOutput(quiz.question),
-      correct_answer: sanitizeOutput(quiz.correct_answer),
-      wrong_answer_1: sanitizeOutput(quiz.wrong_answer_1),
-      wrong_answer_2: sanitizeOutput(quiz.wrong_answer_2),
-      wrong_answer_3: sanitizeOutput(quiz.wrong_answer_3),
-      milestone_title: sanitizeOutput(quiz.milestone_title),
-      milestone_description: sanitizeOutput(quiz.milestone_description),
-    }));
-
     console.log(
-      `✅ Serving ${sanitizedQuizzes.length} sanitized quizzes to authenticated user`
+      `✅ Serving ${result.rows.length} quizzes to authenticated user`
     );
-    res.json(sanitizedQuizzes);
+    res.json(result.rows);
   } catch (err) {
     console.error("Error fetching quizzes:", err);
     res.status(500).json({ error: "Failed to load quizzes" });
@@ -243,34 +232,39 @@ router.post("/", authenticateToken, isAdmin, async (req, res) => {
   } = req.body;
 
   try {
-    // Sanitize inputs
-    const sanitizedData = {
-      milestone_id,
-      question: he.encode(question || ""),
-      correct_answer: he.encode(correct_answer || ""),
-      wrong_answer_1: he.encode(wrong_answer_1 || ""),
-      wrong_answer_2: he.encode(wrong_answer_2 || ""),
-      wrong_answer_3: he.encode(wrong_answer_3 || ""),
-    };
-
-    // Validation
-    if (!sanitizedData.question || sanitizedData.question.length < 5) {
+    // Basic validation only
+    if (!question || question.length < 5) {
       return res
         .status(400)
         .json({ error: "Question is required (min 5 characters)" });
     }
 
-    // Check for dangerous patterns even in encoded form
+    if (
+      !correct_answer ||
+      !wrong_answer_1 ||
+      !wrong_answer_2 ||
+      !wrong_answer_3
+    ) {
+      return res.status(400).json({ error: "All answer options are required" });
+    }
+
+    // Check for dangerous patterns
     const dangerousPatterns = [
-      /script/i,
-      /javascript/i,
+      /<script/i,
+      /javascript:/i,
       /onload/i,
       /onerror/i,
       /onclick/i,
-      /iframe/i,
+      /<iframe/i,
     ];
 
-    const allInputs = Object.values(sanitizedData);
+    const allInputs = [
+      question,
+      correct_answer,
+      wrong_answer_1,
+      wrong_answer_2,
+      wrong_answer_3,
+    ];
     if (
       allInputs.some((input) =>
         dangerousPatterns.some((pattern) => pattern.test(input))
@@ -285,16 +279,16 @@ router.post("/", authenticateToken, isAdmin, async (req, res) => {
       `INSERT INTO quizzes (milestone_id, question, correct_answer, wrong_answer_1, wrong_answer_2, wrong_answer_3)
        VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
       [
-        sanitizedData.milestone_id,
-        sanitizedData.question,
-        sanitizedData.correct_answer,
-        sanitizedData.wrong_answer_1,
-        sanitizedData.wrong_answer_2,
-        sanitizedData.wrong_answer_3,
+        milestone_id,
+        question,
+        correct_answer,
+        wrong_answer_1,
+        wrong_answer_2,
+        wrong_answer_3,
       ]
     );
 
-    console.log("✅ Created sanitized quiz:", result.rows[0]);
+    console.log("✅ Created quiz:", result.rows[0]);
     res.status(201).json(result.rows[0]);
   } catch (err) {
     console.error("Error creating quiz:", err);

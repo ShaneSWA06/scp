@@ -167,9 +167,7 @@ async function getAdminStats() {
       await Promise.all([
         pool.query("SELECT COUNT(*) as count FROM milestones"),
         pool.query("SELECT COUNT(*) as count FROM quizzes"),
-        pool.query("SELECT COUNT(*) as count FROM users WHERE role = ?", [
-          "user",
-        ]),
+        pool.query("SELECT COUNT(*) as count FROM users WHERE role = 'user'"), // Fixed: removed parameter
         pool.query(`
         SELECT 
           COUNT(*) as recent_quiz_attempts,

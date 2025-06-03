@@ -461,7 +461,7 @@ function AdminPanel() {
                 />
                 <input
                   className="bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-400"
-                  placeholder="Media URL (optional)"
+                  placeholder="Image URL (for quiz context) - e.g., https://example.com/image.jpg"
                   value={milestoneForm.media_url}
                   onChange={(e) =>
                     setMilestoneForm({
@@ -469,7 +469,39 @@ function AdminPanel() {
                       media_url: e.target.value,
                     })
                   }
+                  type="url"
                 />
+                {milestoneForm.media_url && (
+                  <div className="md:col-span-2">
+                    <p className="text-sm text-gray-300 mb-2">
+                      📷 Image Preview:
+                    </p>
+                    <div className="flex justify-start">
+                      <img
+                        src={milestoneForm.media_url}
+                        alt="Milestone preview"
+                        style={{
+                          maxWidth: "300px",
+                          maxHeight: "200px",
+                          objectFit: "cover",
+                          borderRadius: "12px",
+                          border: "2px solid rgba(255, 255, 255, 0.2)",
+                        }}
+                        onError={(e) => {
+                          e.target.style.display = "none";
+                          e.target.nextSibling.style.display = "block";
+                        }}
+                      />
+                      <div className="hidden text-red-400 text-sm mt-2 p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
+                        ⚠️ Failed to load image. Please check the URL.
+                      </div>
+                    </div>
+                    <p className="text-xs text-gray-400 mt-2">
+                      🎯 This image will appear in quizzes related to this
+                      milestone.
+                    </p>
+                  </div>
+                )}
                 <textarea
                   className="md:col-span-2 bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-400"
                   placeholder="Description"
@@ -549,25 +581,31 @@ function AdminPanel() {
                         <td className="px-6 py-4 text-gray-300">
                           {milestone.year}
                         </td>
-                        <td className="px-6 py-4 text-gray-300 font-mono text-sm">
-                          {milestone.marker_id}
-                        </td>
                         <td className="px-6 py-4">
                           {milestone.media_url ? (
-                            <img
-                              src={milestone.media_url}
-                              alt={milestone.title}
-                              className="w-16 h-16 object-cover rounded-lg border border-white/20"
-                              onError={(e) => {
-                                e.target.src =
-                                  'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg>';
-                              }}
-                            />
+                            <div className="flex items-center gap-2">
+                              <img
+                                src={milestone.media_url}
+                                alt={milestone.title}
+                                className="milestone-thumbnail"
+                                onError={(e) => {
+                                  e.target.style.display = "none";
+                                  e.target.nextSibling.style.display = "inline";
+                                }}
+                              />
+                              <span className="hidden text-red-400 text-xs">
+                                ❌
+                              </span>
+                              <span className="text-green-400 text-xs">📷</span>
+                            </div>
                           ) : (
-                            <span className="text-gray-500 text-sm">
-                              No media
+                            <span className="text-gray-500 text-xs">
+                              No image
                             </span>
                           )}
+                        </td>
+                        <td className="px-6 py-4 text-gray-300 font-mono text-sm">
+                          {milestone.marker_id}
                         </td>
                         <td className="px-6 py-4">
                           <button
@@ -716,6 +754,24 @@ function AdminPanel() {
                         ID: {quiz.id}
                       </span>
                     </div>
+
+                    {/* FIXED: Smaller milestone image */}
+                    {quiz.milestone_media_url && (
+                      <div className="admin-quiz-image-container">
+                        <img
+                          src={quiz.milestone_media_url}
+                          alt={`${quiz.milestone_title} milestone`}
+                          className="quiz-list-image"
+                          onError={(e) => {
+                            e.target.style.display = "none";
+                          }}
+                        />
+                        <p className="text-xs text-gray-400 mt-1 ml-2">
+                          📷 Milestone Media
+                        </p>
+                      </div>
+                    )}
+
                     <h4 className="text-white font-medium mb-3">
                       {quiz.question}
                     </h4>

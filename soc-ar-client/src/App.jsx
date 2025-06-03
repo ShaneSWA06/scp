@@ -44,23 +44,7 @@ function App() {
             }
           />
           <Route
-            path="/explore"
-            element={
-              <AuthGuard>
-                <Quiz />
-              </AuthGuard>
-            }
-          />
-          <Route
             path="/badges"
-            element={
-              <AuthGuard>
-                <Badges />
-              </AuthGuard>
-            }
-          />
-          <Route
-            path="/features"
             element={
               <AuthGuard>
                 <Badges />

@@ -22,10 +22,6 @@ const createAdminUser = async (client) => {
       console.log("✅ Admin user already exists");
       return;
     }
-
-    // Admin credentials (you can change these)
-    const adminEmail = "admin@socar.com";
-    const adminPassword = "AdminPassword123!"; // Change this!
     const adminName = "System Administrator";
 
     // Hash password
@@ -40,8 +36,6 @@ const createAdminUser = async (client) => {
     );
 
     console.log("🎉 ADMIN USER CREATED SUCCESSFULLY!");
-    console.log("📧 Email:", adminEmail);
-    console.log("🔒 Password:", adminPassword);
     console.log("⚠️  IMPORTANT: Change this password after first login!");
 
     return result.rows[0];

@@ -169,6 +169,7 @@
     "has-tostringtag": "^1.0.0",
     "has-unicode": "^2.0.1",
     "hasha": "^5.2.2",
+    "he": "^1.2.0",
     "header-case": "^2.0.4",
     "helmet": "^8.1.0",
     "hosted-git-info": "^2.8.9",

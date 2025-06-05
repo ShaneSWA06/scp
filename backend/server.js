@@ -80,5 +80,4 @@ app.use((req, res) => {
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`📱 Admin Panel: http://localhost:${PORT}/admin`);
-  console.log(`🔑 Default admin: admin@socar.com / AdminPassword123!`);
 });

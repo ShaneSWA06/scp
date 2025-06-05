@@ -48,13 +48,6 @@ function Navbar() {
 
         {/* Desktop Menu */}
         <div className="navbar-menu">
-          {/* Debug info */}
-          <div
-            style={{ color: "white", fontSize: "12px", marginRight: "1rem" }}
-          >
-            Role: {role || "none"} | Admin Page: {isAdminPage ? "yes" : "no"}
-          </div>
-
           {/* Simple Navigation Logic */}
           {role === "admin" && isAdminPage ? (
             // Admin on admin pages

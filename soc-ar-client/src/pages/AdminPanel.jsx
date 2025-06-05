@@ -476,26 +476,17 @@ function AdminPanel() {
                     <p className="text-sm text-gray-300 mb-2">
                       📷 Image Preview:
                     </p>
-                    <div className="flex justify-start">
-                      <img
-                        src={milestoneForm.media_url}
-                        alt="Milestone preview"
-                        style={{
-                          maxWidth: "300px",
-                          maxHeight: "200px",
-                          objectFit: "cover",
-                          borderRadius: "12px",
-                          border: "2px solid rgba(255, 255, 255, 0.2)",
-                        }}
-                        onError={(e) => {
-                          e.target.style.display = "none";
-                          e.target.nextSibling.style.display = "block";
-                        }}
-                      />
-                      <div className="hidden text-red-400 text-sm mt-2 p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
-                        ⚠️ Failed to load image. Please check the URL.
-                      </div>
-                    </div>
+                    <img
+                      src={milestoneForm.media_url}
+                      alt="Milestone preview"
+                      style={{
+                        maxWidth: "300px",
+                        maxHeight: "200px",
+                        objectFit: "cover",
+                        borderRadius: "12px",
+                        border: "2px solid rgba(255, 255, 255, 0.2)",
+                      }}
+                    />
                     <p className="text-xs text-gray-400 mt-2">
                       🎯 This image will appear in quizzes related to this
                       milestone.

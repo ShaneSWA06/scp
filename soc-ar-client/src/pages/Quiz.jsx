@@ -449,14 +449,7 @@ const Quiz = () => {
                       src={currentQuiz.milestone_media_url}
                       alt={`${currentQuiz.milestone} milestone`}
                       className="quiz-image"
-                      onError={(e) => {
-                        e.target.style.display = "none";
-                        e.target.nextSibling.style.display = "block";
-                      }}
                     />
-                    <div className="hidden text-gray-400 text-sm text-center mt-2">
-                      ⚠️ Image could not be loaded
-                    </div>
                   </div>
                 )}
 

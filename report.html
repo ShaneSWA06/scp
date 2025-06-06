@@ -543,7 +543,7 @@
           </svg>
         </a>
         <div class="test-meta">
-          <p class="timestamp">June 5th 2025, 7:40:47 am (UTC+00:00)</p>
+          <p class="timestamp">June 6th 2025, 5:51:33 am (UTC+00:00)</p>
           <div class="filepath" title="C:\Users\shane\OneDrive\Documents\CA1_SCP\scp">Source: C:\Users\shane\OneDrive\Documents\CA1_SCP\scp</div>
         </div>
       </div>
@@ -559,7 +559,7 @@
               <span class="severity-icon severity-icon--high"></span> <span><strong>0</strong> high issues</span>
             </div>
             <div class="meta-count">
-              <span class="severity-icon severity-icon--medium"></span> <span><strong>4</strong> medium issues</span>
+              <span class="severity-icon severity-icon--medium"></span> <span><strong>8</strong> medium issues</span>
             </div>
             <div class="meta-count">
               <span class="severity-icon severity-icon--low"></span> <span><strong>5</strong> low issues</span>
@@ -569,7 +569,7 @@
         <div class="source-panel">
           <span class="source-panel__heading">Scan Coverage</span>
           <ul class="scan-coverage">
-            <li class="type">HTML files: <strong>2</strong></li><li class="type">JavaScript files: <strong>24</strong></li>
+            <li class="type">HTML files: <strong>1</strong></li><li class="type">JavaScript files: <strong>26</strong></li>
           </ul>            
         </div>
       </div>
@@ -596,51 +596,44 @@
               <div class="card__section">
                   <div class="card__summary severity--medium">
                       <p>Unsanitized input from a React useState value flows into a script &#x27;src&#x27; attribute, where it is used to dynamically construct the HTML page on client side. This may result in a DOM Based Cross-Site Scripting attack (DOMXSS).</p>
-                      <div class="file-location">Found in: <strong>soc-ar-client/src/pages/Quiz.jsx (line : 377)</strong></div>    
+                      <div class="file-location">Found in: <strong>soc-ar-client/src/pages/AdminPanel.jsx (line : 613)</strong></div>    
                   </div>
                   <div class="card__panel dataflow">
                       <h2 class="card__panel__heading"><span class="heading-char">⇣</span> Data Flow</h2>
-                      <div class="dataflow__filename"> soc-ar-client/src/pages/Quiz.jsx</div>
+                      <div class="dataflow__filename"> soc-ar-client/src/pages/AdminPanel.jsx</div>
                       <div class="dataflow__item">
-                          <span class="dataflow__lineno" title="line:column">25:10</span>
-                          <div class="dataflow__code"><span class="dataflow__codeprefix">  const [<br /></span><span class="marker">quizData,</span><span class="dataflow__codesuffix"> setQuizData] &#x3D; useState([]);</span></div>
+                          <span class="dataflow__lineno" title="line:column">43:10</span>
+                          <div class="dataflow__code"><span class="dataflow__codeprefix">  const [<br /></span><span class="marker">milestoneForm,</span><span class="dataflow__codesuffix"> setMilestoneForm] &#x3D; useState({</span></div>
                           <span class="dataflow__badge" title="Data is 'tainted' if it comes from an insecure source such as a file, the network, or the user. This tainted data is passed to a sensitive sink, as described below.">Source</span>
                           <span class="dataflow__step">0</span>
                       </div>
                       
                       <div class="dataflow__item">
-                          <span class="dataflow__lineno" title="line:column">354:30</span>
-                          <div class="dataflow__code"><span class="dataflow__codeprefix">              {quizData.map((<br /></span><span class="marker">quiz)</span><span class="dataflow__codesuffix"> &#x3D;&gt; (</span></div>
+                          <span class="dataflow__lineno" title="line:column">613:28</span>
+                          <div class="dataflow__code"><span class="dataflow__codeprefix">                      src&#x3D;{<br /></span><span class="marker">milestoneForm.</span><span class="dataflow__codesuffix">media_url}</span></div>
                           
                           <span class="dataflow__step">1</span>
                       </div>
                       
                       <div class="dataflow__item">
-                          <span class="dataflow__lineno" title="line:column">377:30</span>
-                          <div class="dataflow__code"><span class="dataflow__codeprefix">                        src&#x3D;{<br /></span><span class="marker">quiz.</span><span class="dataflow__codesuffix">milestone_media_url}</span></div>
+                          <span class="dataflow__lineno" title="line:column">613:42</span>
+                          <div class="dataflow__code"><span class="dataflow__codeprefix">                      src&#x3D;{milestoneForm.<br /></span><span class="marker">media_url}</span><span class="dataflow__codesuffix"></span></div>
                           
                           <span class="dataflow__step">2</span>
                       </div>
                       
                       <div class="dataflow__item">
-                          <span class="dataflow__lineno" title="line:column">377:35</span>
-                          <div class="dataflow__code"><span class="dataflow__codeprefix">                        src&#x3D;{quiz.<br /></span><span class="marker">milestone_media_url}</span><span class="dataflow__codesuffix"></span></div>
+                          <span class="dataflow__lineno" title="line:column">613:28</span>
+                          <div class="dataflow__code"><span class="dataflow__codeprefix">                      src&#x3D;{<br /></span><span class="marker">milestoneForm.media_url}</span><span class="dataflow__codesuffix"></span></div>
                           
                           <span class="dataflow__step">3</span>
                       </div>
                       
                       <div class="dataflow__item">
-                          <span class="dataflow__lineno" title="line:column">377:30</span>
-                          <div class="dataflow__code"><span class="dataflow__codeprefix">                        src&#x3D;{<br /></span><span class="marker">quiz.milestone_media_url}</span><span class="dataflow__codesuffix"></span></div>
-                          
-                          <span class="dataflow__step">4</span>
-                      </div>
-                      
-                      <div class="dataflow__item">
-                          <span class="dataflow__lineno" title="line:column">377:29</span>
-                          <div class="dataflow__code"><span class="dataflow__codeprefix">                        src&#x3D;<br /></span><span class="marker">{quiz.milestone_media_url}</span><span class="dataflow__codesuffix"></span></div>
+                          <span class="dataflow__lineno" title="line:column">613:27</span>
+                          <div class="dataflow__code"><span class="dataflow__codeprefix">                      src&#x3D;<br /></span><span class="marker">{milestoneForm.media_url}</span><span class="dataflow__codesuffix"></span></div>
                           <span class="dataflow__badge" title="Sinks are the operations that must receive clean data and that you wouldn't want an attacker to be able to manipulate.">Sink</span>
-                          <span class="dataflow__step">5</span>
+                          <span class="dataflow__step">4</span>
                       </div>
                   </div>
                   <div class="card__panel fix-analysis">
@@ -726,44 +719,51 @@
               <div class="card__section">
                   <div class="card__summary severity--medium">
                       <p>Unsanitized input from a React useState value flows into a script &#x27;src&#x27; attribute, where it is used to dynamically construct the HTML page on client side. This may result in a DOM Based Cross-Site Scripting attack (DOMXSS).</p>
-                      <div class="file-location">Found in: <strong>soc-ar-client/src/pages/Quiz.jsx (line : 449)</strong></div>    
+                      <div class="file-location">Found in: <strong>soc-ar-client/src/pages/Quiz.jsx (line : 391)</strong></div>    
                   </div>
                   <div class="card__panel dataflow">
                       <h2 class="card__panel__heading"><span class="heading-char">⇣</span> Data Flow</h2>
-                      
+                      <div class="dataflow__filename"> soc-ar-client/src/pages/Quiz.jsx</div>
                       <div class="dataflow__item">
-                          <span class="dataflow__lineno" title="line:column">19:10</span>
-                          <div class="dataflow__code"><span class="dataflow__codeprefix">  const [<br /></span><span class="marker">currentQuiz,</span><span class="dataflow__codesuffix"> setCurrentQuiz] &#x3D; useState(null);</span></div>
+                          <span class="dataflow__lineno" title="line:column">25:10</span>
+                          <div class="dataflow__code"><span class="dataflow__codeprefix">  const [<br /></span><span class="marker">quizData,</span><span class="dataflow__codesuffix"> setQuizData] &#x3D; useState([]);</span></div>
                           <span class="dataflow__badge" title="Data is 'tainted' if it comes from an insecure source such as a file, the network, or the user. This tainted data is passed to a sensitive sink, as described below.">Source</span>
                           <span class="dataflow__step">0</span>
                       </div>
                       
                       <div class="dataflow__item">
-                          <span class="dataflow__lineno" title="line:column">449:28</span>
-                          <div class="dataflow__code"><span class="dataflow__codeprefix">                      src&#x3D;{<br /></span><span class="marker">currentQuiz.</span><span class="dataflow__codesuffix">milestone_media_url}</span></div>
+                          <span class="dataflow__lineno" title="line:column">368:30</span>
+                          <div class="dataflow__code"><span class="dataflow__codeprefix">              {quizData.map((<br /></span><span class="marker">quiz)</span><span class="dataflow__codesuffix"> &#x3D;&gt; (</span></div>
                           
                           <span class="dataflow__step">1</span>
                       </div>
                       
                       <div class="dataflow__item">
-                          <span class="dataflow__lineno" title="line:column">449:40</span>
-                          <div class="dataflow__code"><span class="dataflow__codeprefix">                      src&#x3D;{currentQuiz.<br /></span><span class="marker">milestone_media_url}</span><span class="dataflow__codesuffix"></span></div>
+                          <span class="dataflow__lineno" title="line:column">391:30</span>
+                          <div class="dataflow__code"><span class="dataflow__codeprefix">                        src&#x3D;{<br /></span><span class="marker">quiz.</span><span class="dataflow__codesuffix">milestone_media_url}</span></div>
                           
                           <span class="dataflow__step">2</span>
                       </div>
                       
                       <div class="dataflow__item">
-                          <span class="dataflow__lineno" title="line:column">449:28</span>
-                          <div class="dataflow__code"><span class="dataflow__codeprefix">                      src&#x3D;{<br /></span><span class="marker">currentQuiz.milestone_media_url}</span><span class="dataflow__codesuffix"></span></div>
+                          <span class="dataflow__lineno" title="line:column">391:35</span>
+                          <div class="dataflow__code"><span class="dataflow__codeprefix">                        src&#x3D;{quiz.<br /></span><span class="marker">milestone_media_url}</span><span class="dataflow__codesuffix"></span></div>
                           
                           <span class="dataflow__step">3</span>
                       </div>
                       
                       <div class="dataflow__item">
-                          <span class="dataflow__lineno" title="line:column">449:27</span>
-                          <div class="dataflow__code"><span class="dataflow__codeprefix">                      src&#x3D;<br /></span><span class="marker">{currentQuiz.milestone_media_url}</span><span class="dataflow__codesuffix"></span></div>
-                          <span class="dataflow__badge" title="Sinks are the operations that must receive clean data and that you wouldn't want an attacker to be able to manipulate.">Sink</span>
+                          <span class="dataflow__lineno" title="line:column">391:30</span>
+                          <div class="dataflow__code"><span class="dataflow__codeprefix">                        src&#x3D;{<br /></span><span class="marker">quiz.milestone_media_url}</span><span class="dataflow__codesuffix"></span></div>
+                          
                           <span class="dataflow__step">4</span>
+                      </div>
+                      
+                      <div class="dataflow__item">
+                          <span class="dataflow__lineno" title="line:column">391:29</span>
+                          <div class="dataflow__code"><span class="dataflow__codeprefix">                        src&#x3D;<br /></span><span class="marker">{quiz.milestone_media_url}</span><span class="dataflow__codesuffix"></span></div>
+                          <span class="dataflow__badge" title="Sinks are the operations that must receive clean data and that you wouldn't want an attacker to be able to manipulate.">Sink</span>
+                          <span class="dataflow__step">5</span>
                       </div>
                   </div>
                   <div class="card__panel fix-analysis">
@@ -849,42 +849,42 @@
               <div class="card__section">
                   <div class="card__summary severity--medium">
                       <p>Unsanitized input from a React useState value flows into a script &#x27;src&#x27; attribute, where it is used to dynamically construct the HTML page on client side. This may result in a DOM Based Cross-Site Scripting attack (DOMXSS).</p>
-                      <div class="file-location">Found in: <strong>soc-ar-client/src/pages/AdminPanel.jsx (line : 480)</strong></div>    
+                      <div class="file-location">Found in: <strong>soc-ar-client/src/pages/Quiz.jsx (line : 463)</strong></div>    
                   </div>
                   <div class="card__panel dataflow">
                       <h2 class="card__panel__heading"><span class="heading-char">⇣</span> Data Flow</h2>
-                      <div class="dataflow__filename"> soc-ar-client/src/pages/AdminPanel.jsx</div>
+                      
                       <div class="dataflow__item">
-                          <span class="dataflow__lineno" title="line:column">43:10</span>
-                          <div class="dataflow__code"><span class="dataflow__codeprefix">  const [<br /></span><span class="marker">milestoneForm,</span><span class="dataflow__codesuffix"> setMilestoneForm] &#x3D; useState({</span></div>
+                          <span class="dataflow__lineno" title="line:column">19:10</span>
+                          <div class="dataflow__code"><span class="dataflow__codeprefix">  const [<br /></span><span class="marker">currentQuiz,</span><span class="dataflow__codesuffix"> setCurrentQuiz] &#x3D; useState(null);</span></div>
                           <span class="dataflow__badge" title="Data is 'tainted' if it comes from an insecure source such as a file, the network, or the user. This tainted data is passed to a sensitive sink, as described below.">Source</span>
                           <span class="dataflow__step">0</span>
                       </div>
                       
                       <div class="dataflow__item">
-                          <span class="dataflow__lineno" title="line:column">480:28</span>
-                          <div class="dataflow__code"><span class="dataflow__codeprefix">                      src&#x3D;{<br /></span><span class="marker">milestoneForm.</span><span class="dataflow__codesuffix">media_url}</span></div>
+                          <span class="dataflow__lineno" title="line:column">463:28</span>
+                          <div class="dataflow__code"><span class="dataflow__codeprefix">                      src&#x3D;{<br /></span><span class="marker">currentQuiz.</span><span class="dataflow__codesuffix">milestone_media_url}</span></div>
                           
                           <span class="dataflow__step">1</span>
                       </div>
                       
                       <div class="dataflow__item">
-                          <span class="dataflow__lineno" title="line:column">480:42</span>
-                          <div class="dataflow__code"><span class="dataflow__codeprefix">                      src&#x3D;{milestoneForm.<br /></span><span class="marker">media_url}</span><span class="dataflow__codesuffix"></span></div>
+                          <span class="dataflow__lineno" title="line:column">463:40</span>
+                          <div class="dataflow__code"><span class="dataflow__codeprefix">                      src&#x3D;{currentQuiz.<br /></span><span class="marker">milestone_media_url}</span><span class="dataflow__codesuffix"></span></div>
                           
                           <span class="dataflow__step">2</span>
                       </div>
                       
                       <div class="dataflow__item">
-                          <span class="dataflow__lineno" title="line:column">480:28</span>
-                          <div class="dataflow__code"><span class="dataflow__codeprefix">                      src&#x3D;{<br /></span><span class="marker">milestoneForm.media_url}</span><span class="dataflow__codesuffix"></span></div>
+                          <span class="dataflow__lineno" title="line:column">463:28</span>
+                          <div class="dataflow__code"><span class="dataflow__codeprefix">                      src&#x3D;{<br /></span><span class="marker">currentQuiz.milestone_media_url}</span><span class="dataflow__codesuffix"></span></div>
                           
                           <span class="dataflow__step">3</span>
                       </div>
                       
                       <div class="dataflow__item">
-                          <span class="dataflow__lineno" title="line:column">480:27</span>
-                          <div class="dataflow__code"><span class="dataflow__codeprefix">                      src&#x3D;<br /></span><span class="marker">{milestoneForm.media_url}</span><span class="dataflow__codesuffix"></span></div>
+                          <span class="dataflow__lineno" title="line:column">463:27</span>
+                          <div class="dataflow__code"><span class="dataflow__codeprefix">                      src&#x3D;<br /></span><span class="marker">{currentQuiz.milestone_media_url}</span><span class="dataflow__codesuffix"></span></div>
                           <span class="dataflow__badge" title="Sinks are the operations that must receive clean data and that you wouldn't want an attacker to be able to manipulate.">Sink</span>
                           <span class="dataflow__step">4</span>
                       </div>
@@ -957,10 +957,523 @@
               <header class="card__header">
                   <div class="card__header__main">
                       <div class="severity-icon severity-icon--medium"></div>
-                      <h2 class="card__title">Information Exposure</h2>
+                      <h2 class="card__title">Cross-site Scripting (XSS)</h2>
                       <div class="card__actions">
                           <label for="tab-dataflow-3" class="card__action">Data Flow</label>
                           <label for="tab-fix-3" class="card__action">Fix Analysis</label>
+                      </div>
+                  </div>
+                  <ul class="card__meta">
+                      <li class="card__meta__item">SNYK-CODE</li>
+                      <li class="card__meta__item">CWE-79</li>
+                      <li class="card__meta__item">DOMXSS</li>
+                  </ul>
+              </header>
+              <div class="card__section">
+                  <div class="card__summary severity--medium">
+                      <p>Unsanitized input from a React useState value flows into a script &#x27;src&#x27; attribute, where it is used to dynamically construct the HTML page on client side. This may result in a DOM Based Cross-Site Scripting attack (DOMXSS).</p>
+                      <div class="file-location">Found in: <strong>soc-ar-client/src/pages/Resources.jsx (line : 188)</strong></div>    
+                  </div>
+                  <div class="card__panel dataflow">
+                      <h2 class="card__panel__heading"><span class="heading-char">⇣</span> Data Flow</h2>
+                      <div class="dataflow__filename"> soc-ar-client/src/pages/Resources.jsx</div>
+                      <div class="dataflow__item">
+                          <span class="dataflow__lineno" title="line:column">18:10</span>
+                          <div class="dataflow__code"><span class="dataflow__codeprefix">  const [<br /></span><span class="marker">milestones,</span><span class="dataflow__codesuffix"> setMilestones] &#x3D; useState([]);</span></div>
+                          <span class="dataflow__badge" title="Data is 'tainted' if it comes from an insecure source such as a file, the network, or the user. This tainted data is passed to a sensitive sink, as described below.">Source</span>
+                          <span class="dataflow__step">0</span>
+                      </div>
+                      
+                      <div class="dataflow__item">
+                          <span class="dataflow__lineno" title="line:column">167:32</span>
+                          <div class="dataflow__code"><span class="dataflow__codeprefix">              {milestones.map((<br /></span><span class="marker">milestone)</span><span class="dataflow__codesuffix"> &#x3D;&gt; {</span></div>
+                          
+                          <span class="dataflow__step">1</span>
+                      </div>
+                      
+                      <div class="dataflow__item">
+                          <span class="dataflow__lineno" title="line:column">188:32</span>
+                          <div class="dataflow__code"><span class="dataflow__codeprefix">                          src&#x3D;{<br /></span><span class="marker">milestone.</span><span class="dataflow__codesuffix">media_url}</span></div>
+                          
+                          <span class="dataflow__step">2</span>
+                      </div>
+                      
+                      <div class="dataflow__item">
+                          <span class="dataflow__lineno" title="line:column">188:42</span>
+                          <div class="dataflow__code"><span class="dataflow__codeprefix">                          src&#x3D;{milestone.<br /></span><span class="marker">media_url}</span><span class="dataflow__codesuffix"></span></div>
+                          
+                          <span class="dataflow__step">3</span>
+                      </div>
+                      
+                      <div class="dataflow__item">
+                          <span class="dataflow__lineno" title="line:column">188:32</span>
+                          <div class="dataflow__code"><span class="dataflow__codeprefix">                          src&#x3D;{<br /></span><span class="marker">milestone.media_url}</span><span class="dataflow__codesuffix"></span></div>
+                          
+                          <span class="dataflow__step">4</span>
+                      </div>
+                      
+                      <div class="dataflow__item">
+                          <span class="dataflow__lineno" title="line:column">188:31</span>
+                          <div class="dataflow__code"><span class="dataflow__codeprefix">                          src&#x3D;<br /></span><span class="marker">{milestone.media_url}</span><span class="dataflow__codesuffix"></span></div>
+                          <span class="dataflow__badge" title="Sinks are the operations that must receive clean data and that you wouldn't want an attacker to be able to manipulate.">Sink</span>
+                          <span class="dataflow__step">5</span>
+                      </div>
+                  </div>
+                  <div class="card__panel fix-analysis">
+                      <h2 class="card__panel__heading"><span class="heading-char">✓</span> Fix Analysis</h2>
+                      <div class="card__panel__markdown"><h2 id="details">Details</h2>
+          <p>A cross-site scripting attack occurs when the attacker tricks a legitimate web-based application or site to accept a request as originating from a trusted source.</p>
+          <p>This is done by escaping the context of the web application; the web application then delivers that data to its users along with other trusted dynamic content, without validating it. The browser unknowingly executes malicious script on the client side (through client-side languages; usually JavaScript or HTML)  in order to perform actions that are otherwise typically blocked by the browser&#39;s Same Origin Policy.</p>
+          <p>Injecting malicious code is the most prevalent manner by which XSS is exploited; for this reason, escaping characters in order to prevent this manipulation is the top method for securing code against this vulnerability.</p>
+          <p>Escaping means that the application is coded to mark key characters, and particularly key characters included in user input, to prevent those characters from being interpreted in a dangerous context. For example, in HTML, <code>&lt;</code> can be coded as  <code>&amp;lt</code>; and <code>&gt;</code> can be coded as <code>&amp;gt</code>; in order to be interpreted and displayed as themselves in text, while within the code itself, they are used for HTML tags. If malicious content is injected into an application that escapes special characters and that malicious content uses <code>&lt;</code> and <code>&gt;</code> as HTML tags, those characters are nonetheless not interpreted as HTML tags by the browser if they&#39;ve been correctly escaped in the application code and in this way the attempted attack is diverted.</p>
+          <p>The most prominent use of XSS is to steal cookies (source: OWASP HttpOnly) and hijack user sessions, but XSS exploits have been used to expose sensitive information, enable access to privileged services and functionality and deliver malware.</p>
+          <h3 id="types-of-attacks">Types of attacks</h3>
+          <p>There are a few methods by which XSS can be manipulated:</p>
+          <table>
+          <thead>
+          <tr>
+          <th>Type</th>
+          <th>Origin</th>
+          <th>Description</th>
+          </tr>
+          </thead>
+          <tbody><tr>
+          <td><strong>Stored</strong></td>
+          <td>Server</td>
+          <td>The malicious code is inserted in the application (usually as a link) by the attacker. The code is activated every time a user clicks the link.</td>
+          </tr>
+          <tr>
+          <td><strong>Reflected</strong></td>
+          <td>Server</td>
+          <td>The attacker delivers a malicious link externally from the vulnerable web site application to a user. When clicked, malicious code is sent to the vulnerable web site, which reflects the attack back to the user&#39;s browser.</td>
+          </tr>
+          <tr>
+          <td><strong>DOM-based</strong></td>
+          <td>Client</td>
+          <td>The attacker forces the user&#39;s browser to render a malicious page. The data in the page itself delivers the cross-site scripting data.</td>
+          </tr>
+          <tr>
+          <td><strong>Mutated</strong></td>
+          <td></td>
+          <td>The attacker injects code that appears safe, but is then rewritten and modified by the browser, while parsing the markup. An example is rebalancing unclosed quotation marks or even adding quotation marks to unquoted parameters.</td>
+          </tr>
+          </tbody></table>
+          <h3 id="affected-environments">Affected environments</h3>
+          <p>The following environments are susceptible to an XSS attack:</p>
+          <ul>
+          <li>Web servers</li>
+          <li>Application servers</li>
+          <li>Web application environments</li>
+          </ul>
+          <h2 id="best-practices-for-prevention">Best practices for prevention</h2>
+          <p>This section describes the top best practices designed to specifically protect your code:</p>
+          <ul>
+          <li>Sanitize data input in an HTTP request before reflecting it back, ensuring all data is validated, filtered or escaped before echoing anything back to the user, such as the values of query parameters during searches.</li>
+          <li>Convert special characters such as <code>?</code>, <code>&amp;</code>, <code>/</code>, <code>&lt;</code>, <code>&gt;</code> and spaces to their respective HTML or URL encoded equivalents.</li>
+          <li>Give users the option to disable client-side scripts.</li>
+          <li>Redirect invalid requests.</li>
+          <li>Detect simultaneous logins, including those from two separate IP addresses, and invalidate those sessions.</li>
+          <li>Use and enforce a Content Security Policy (source: Wikipedia) to disable any features that might be manipulated for an XSS attack.</li>
+          <li>Read the documentation for any of the libraries referenced in your code to understand which elements allow for embedded HTML.</li>
+          </ul>
+          </div>
+                  </div>
+              </div>
+          </div>
+          <div class="card card--vuln  disclosure--not-new severity--medium" data-snyk-test="medium">
+              <input type="radio" name="tab-view-4" id="tab-dataflow-4" value="dataflow" class="card__tab__radio" checked>
+              <input type="radio" name="tab-view-4" id="tab-fix-4" value="fix" class="card__tab__radio" >
+          
+              <header class="card__header">
+                  <div class="card__header__main">
+                      <div class="severity-icon severity-icon--medium"></div>
+                      <h2 class="card__title">Cross-site Scripting (XSS)</h2>
+                      <div class="card__actions">
+                          <label for="tab-dataflow-4" class="card__action">Data Flow</label>
+                          <label for="tab-fix-4" class="card__action">Fix Analysis</label>
+                      </div>
+                  </div>
+                  <ul class="card__meta">
+                      <li class="card__meta__item">SNYK-CODE</li>
+                      <li class="card__meta__item">CWE-79</li>
+                      <li class="card__meta__item">DOMXSS</li>
+                  </ul>
+              </header>
+              <div class="card__section">
+                  <div class="card__summary severity--medium">
+                      <p>Unsanitized input from a React useState value flows into a script &#x27;src&#x27; attribute, where it is used to dynamically construct the HTML page on client side. This may result in a DOM Based Cross-Site Scripting attack (DOMXSS).</p>
+                      <div class="file-location">Found in: <strong>soc-ar-client/src/pages/Resources.jsx (line : 268)</strong></div>    
+                  </div>
+                  <div class="card__panel dataflow">
+                      <h2 class="card__panel__heading"><span class="heading-char">⇣</span> Data Flow</h2>
+                      
+                      <div class="dataflow__item">
+                          <span class="dataflow__lineno" title="line:column">19:10</span>
+                          <div class="dataflow__code"><span class="dataflow__codeprefix">  const [<br /></span><span class="marker">selectedMilestone,</span><span class="dataflow__codesuffix"> setSelectedMilestone] &#x3D; useState(null);</span></div>
+                          <span class="dataflow__badge" title="Data is 'tainted' if it comes from an insecure source such as a file, the network, or the user. This tainted data is passed to a sensitive sink, as described below.">Source</span>
+                          <span class="dataflow__step">0</span>
+                      </div>
+                      
+                      <div class="dataflow__item">
+                          <span class="dataflow__lineno" title="line:column">268:28</span>
+                          <div class="dataflow__code"><span class="dataflow__codeprefix">                      src&#x3D;{<br /></span><span class="marker">selectedMilestone.</span><span class="dataflow__codesuffix">media_url}</span></div>
+                          
+                          <span class="dataflow__step">1</span>
+                      </div>
+                      
+                      <div class="dataflow__item">
+                          <span class="dataflow__lineno" title="line:column">268:46</span>
+                          <div class="dataflow__code"><span class="dataflow__codeprefix">                      src&#x3D;{selectedMilestone.<br /></span><span class="marker">media_url}</span><span class="dataflow__codesuffix"></span></div>
+                          
+                          <span class="dataflow__step">2</span>
+                      </div>
+                      
+                      <div class="dataflow__item">
+                          <span class="dataflow__lineno" title="line:column">268:28</span>
+                          <div class="dataflow__code"><span class="dataflow__codeprefix">                      src&#x3D;{<br /></span><span class="marker">selectedMilestone.media_url}</span><span class="dataflow__codesuffix"></span></div>
+                          
+                          <span class="dataflow__step">3</span>
+                      </div>
+                      
+                      <div class="dataflow__item">
+                          <span class="dataflow__lineno" title="line:column">268:27</span>
+                          <div class="dataflow__code"><span class="dataflow__codeprefix">                      src&#x3D;<br /></span><span class="marker">{selectedMilestone.media_url}</span><span class="dataflow__codesuffix"></span></div>
+                          <span class="dataflow__badge" title="Sinks are the operations that must receive clean data and that you wouldn't want an attacker to be able to manipulate.">Sink</span>
+                          <span class="dataflow__step">4</span>
+                      </div>
+                  </div>
+                  <div class="card__panel fix-analysis">
+                      <h2 class="card__panel__heading"><span class="heading-char">✓</span> Fix Analysis</h2>
+                      <div class="card__panel__markdown"><h2 id="details">Details</h2>
+          <p>A cross-site scripting attack occurs when the attacker tricks a legitimate web-based application or site to accept a request as originating from a trusted source.</p>
+          <p>This is done by escaping the context of the web application; the web application then delivers that data to its users along with other trusted dynamic content, without validating it. The browser unknowingly executes malicious script on the client side (through client-side languages; usually JavaScript or HTML)  in order to perform actions that are otherwise typically blocked by the browser&#39;s Same Origin Policy.</p>
+          <p>Injecting malicious code is the most prevalent manner by which XSS is exploited; for this reason, escaping characters in order to prevent this manipulation is the top method for securing code against this vulnerability.</p>
+          <p>Escaping means that the application is coded to mark key characters, and particularly key characters included in user input, to prevent those characters from being interpreted in a dangerous context. For example, in HTML, <code>&lt;</code> can be coded as  <code>&amp;lt</code>; and <code>&gt;</code> can be coded as <code>&amp;gt</code>; in order to be interpreted and displayed as themselves in text, while within the code itself, they are used for HTML tags. If malicious content is injected into an application that escapes special characters and that malicious content uses <code>&lt;</code> and <code>&gt;</code> as HTML tags, those characters are nonetheless not interpreted as HTML tags by the browser if they&#39;ve been correctly escaped in the application code and in this way the attempted attack is diverted.</p>
+          <p>The most prominent use of XSS is to steal cookies (source: OWASP HttpOnly) and hijack user sessions, but XSS exploits have been used to expose sensitive information, enable access to privileged services and functionality and deliver malware.</p>
+          <h3 id="types-of-attacks">Types of attacks</h3>
+          <p>There are a few methods by which XSS can be manipulated:</p>
+          <table>
+          <thead>
+          <tr>
+          <th>Type</th>
+          <th>Origin</th>
+          <th>Description</th>
+          </tr>
+          </thead>
+          <tbody><tr>
+          <td><strong>Stored</strong></td>
+          <td>Server</td>
+          <td>The malicious code is inserted in the application (usually as a link) by the attacker. The code is activated every time a user clicks the link.</td>
+          </tr>
+          <tr>
+          <td><strong>Reflected</strong></td>
+          <td>Server</td>
+          <td>The attacker delivers a malicious link externally from the vulnerable web site application to a user. When clicked, malicious code is sent to the vulnerable web site, which reflects the attack back to the user&#39;s browser.</td>
+          </tr>
+          <tr>
+          <td><strong>DOM-based</strong></td>
+          <td>Client</td>
+          <td>The attacker forces the user&#39;s browser to render a malicious page. The data in the page itself delivers the cross-site scripting data.</td>
+          </tr>
+          <tr>
+          <td><strong>Mutated</strong></td>
+          <td></td>
+          <td>The attacker injects code that appears safe, but is then rewritten and modified by the browser, while parsing the markup. An example is rebalancing unclosed quotation marks or even adding quotation marks to unquoted parameters.</td>
+          </tr>
+          </tbody></table>
+          <h3 id="affected-environments">Affected environments</h3>
+          <p>The following environments are susceptible to an XSS attack:</p>
+          <ul>
+          <li>Web servers</li>
+          <li>Application servers</li>
+          <li>Web application environments</li>
+          </ul>
+          <h2 id="best-practices-for-prevention">Best practices for prevention</h2>
+          <p>This section describes the top best practices designed to specifically protect your code:</p>
+          <ul>
+          <li>Sanitize data input in an HTTP request before reflecting it back, ensuring all data is validated, filtered or escaped before echoing anything back to the user, such as the values of query parameters during searches.</li>
+          <li>Convert special characters such as <code>?</code>, <code>&amp;</code>, <code>/</code>, <code>&lt;</code>, <code>&gt;</code> and spaces to their respective HTML or URL encoded equivalents.</li>
+          <li>Give users the option to disable client-side scripts.</li>
+          <li>Redirect invalid requests.</li>
+          <li>Detect simultaneous logins, including those from two separate IP addresses, and invalidate those sessions.</li>
+          <li>Use and enforce a Content Security Policy (source: Wikipedia) to disable any features that might be manipulated for an XSS attack.</li>
+          <li>Read the documentation for any of the libraries referenced in your code to understand which elements allow for embedded HTML.</li>
+          </ul>
+          </div>
+                  </div>
+              </div>
+          </div>
+          <div class="card card--vuln  disclosure--not-new severity--medium" data-snyk-test="medium">
+              <input type="radio" name="tab-view-5" id="tab-dataflow-5" value="dataflow" class="card__tab__radio" checked>
+              <input type="radio" name="tab-view-5" id="tab-fix-5" value="fix" class="card__tab__radio" >
+          
+              <header class="card__header">
+                  <div class="card__header__main">
+                      <div class="severity-icon severity-icon--medium"></div>
+                      <h2 class="card__title">Cross-site Scripting (XSS)</h2>
+                      <div class="card__actions">
+                          <label for="tab-dataflow-5" class="card__action">Data Flow</label>
+                          <label for="tab-fix-5" class="card__action">Fix Analysis</label>
+                      </div>
+                  </div>
+                  <ul class="card__meta">
+                      <li class="card__meta__item">SNYK-CODE</li>
+                      <li class="card__meta__item">CWE-79</li>
+                      <li class="card__meta__item">DOMXSS</li>
+                  </ul>
+              </header>
+              <div class="card__section">
+                  <div class="card__summary severity--medium">
+                      <p>Unsanitized input from a React useState value flows into a React dynamic &#x27;href&#x27; attribute, where it is used to dynamically construct the HTML page on client side. This may result in a DOM Based Cross-Site Scripting attack (DOMXSS).</p>
+                      <div class="file-location">Found in: <strong>soc-ar-client/src/pages/AdminPanel.jsx (line : 1164)</strong></div>    
+                  </div>
+                  <div class="card__panel dataflow">
+                      <h2 class="card__panel__heading"><span class="heading-char">⇣</span> Data Flow</h2>
+                      <div class="dataflow__filename"> soc-ar-client/src/pages/AdminPanel.jsx</div>
+                      <div class="dataflow__item">
+                          <span class="dataflow__lineno" title="line:column">62:10</span>
+                          <div class="dataflow__code"><span class="dataflow__codeprefix">  const [<br /></span><span class="marker">resources,</span><span class="dataflow__codesuffix"> setResources] &#x3D; useState([]);</span></div>
+                          <span class="dataflow__badge" title="Data is 'tainted' if it comes from an insecure source such as a file, the network, or the user. This tainted data is passed to a sensitive sink, as described below.">Source</span>
+                          <span class="dataflow__step">0</span>
+                      </div>
+                      
+                      <div class="dataflow__item">
+                          <span class="dataflow__lineno" title="line:column">1122:33</span>
+                          <div class="dataflow__code"><span class="dataflow__codeprefix">                {resources.map((<br /></span><span class="marker">resource)</span><span class="dataflow__codesuffix"> &#x3D;&gt; (</span></div>
+                          
+                          <span class="dataflow__step">1</span>
+                      </div>
+                      
+                      <div class="dataflow__item">
+                          <span class="dataflow__lineno" title="line:column">1164:31</span>
+                          <div class="dataflow__code"><span class="dataflow__codeprefix">                        href&#x3D;{<br /></span><span class="marker">resource.</span><span class="dataflow__codesuffix">url}</span></div>
+                          
+                          <span class="dataflow__step">2</span>
+                      </div>
+                      
+                      <div class="dataflow__item">
+                          <span class="dataflow__lineno" title="line:column">1164:40</span>
+                          <div class="dataflow__code"><span class="dataflow__codeprefix">                        href&#x3D;{resource.<br /></span><span class="marker">url}</span><span class="dataflow__codesuffix"></span></div>
+                          
+                          <span class="dataflow__step">3</span>
+                      </div>
+                      
+                      <div class="dataflow__item">
+                          <span class="dataflow__lineno" title="line:column">1164:31</span>
+                          <div class="dataflow__code"><span class="dataflow__codeprefix">                        href&#x3D;{<br /></span><span class="marker">resource.url}</span><span class="dataflow__codesuffix"></span></div>
+                          
+                          <span class="dataflow__step">4</span>
+                      </div>
+                      
+                      <div class="dataflow__item">
+                          <span class="dataflow__lineno" title="line:column">1164:30</span>
+                          <div class="dataflow__code"><span class="dataflow__codeprefix">                        href&#x3D;<br /></span><span class="marker">{resource.url}</span><span class="dataflow__codesuffix"></span></div>
+                          <span class="dataflow__badge" title="Sinks are the operations that must receive clean data and that you wouldn't want an attacker to be able to manipulate.">Sink</span>
+                          <span class="dataflow__step">5</span>
+                      </div>
+                  </div>
+                  <div class="card__panel fix-analysis">
+                      <h2 class="card__panel__heading"><span class="heading-char">✓</span> Fix Analysis</h2>
+                      <div class="card__panel__markdown"><h2 id="details">Details</h2>
+          <p>A cross-site scripting attack occurs when the attacker tricks a legitimate web-based application or site to accept a request as originating from a trusted source.</p>
+          <p>This is done by escaping the context of the web application; the web application then delivers that data to its users along with other trusted dynamic content, without validating it. The browser unknowingly executes malicious script on the client side (through client-side languages; usually JavaScript or HTML)  in order to perform actions that are otherwise typically blocked by the browser&#39;s Same Origin Policy.</p>
+          <p>Injecting malicious code is the most prevalent manner by which XSS is exploited; for this reason, escaping characters in order to prevent this manipulation is the top method for securing code against this vulnerability.</p>
+          <p>Escaping means that the application is coded to mark key characters, and particularly key characters included in user input, to prevent those characters from being interpreted in a dangerous context. For example, in HTML, <code>&lt;</code> can be coded as  <code>&amp;lt</code>; and <code>&gt;</code> can be coded as <code>&amp;gt</code>; in order to be interpreted and displayed as themselves in text, while within the code itself, they are used for HTML tags. If malicious content is injected into an application that escapes special characters and that malicious content uses <code>&lt;</code> and <code>&gt;</code> as HTML tags, those characters are nonetheless not interpreted as HTML tags by the browser if they&#39;ve been correctly escaped in the application code and in this way the attempted attack is diverted.</p>
+          <p>The most prominent use of XSS is to steal cookies (source: OWASP HttpOnly) and hijack user sessions, but XSS exploits have been used to expose sensitive information, enable access to privileged services and functionality and deliver malware.</p>
+          <h3 id="types-of-attacks">Types of attacks</h3>
+          <p>There are a few methods by which XSS can be manipulated:</p>
+          <table>
+          <thead>
+          <tr>
+          <th>Type</th>
+          <th>Origin</th>
+          <th>Description</th>
+          </tr>
+          </thead>
+          <tbody><tr>
+          <td><strong>Stored</strong></td>
+          <td>Server</td>
+          <td>The malicious code is inserted in the application (usually as a link) by the attacker. The code is activated every time a user clicks the link.</td>
+          </tr>
+          <tr>
+          <td><strong>Reflected</strong></td>
+          <td>Server</td>
+          <td>The attacker delivers a malicious link externally from the vulnerable web site application to a user. When clicked, malicious code is sent to the vulnerable web site, which reflects the attack back to the user&#39;s browser.</td>
+          </tr>
+          <tr>
+          <td><strong>DOM-based</strong></td>
+          <td>Client</td>
+          <td>The attacker forces the user&#39;s browser to render a malicious page. The data in the page itself delivers the cross-site scripting data.</td>
+          </tr>
+          <tr>
+          <td><strong>Mutated</strong></td>
+          <td></td>
+          <td>The attacker injects code that appears safe, but is then rewritten and modified by the browser, while parsing the markup. An example is rebalancing unclosed quotation marks or even adding quotation marks to unquoted parameters.</td>
+          </tr>
+          </tbody></table>
+          <h3 id="affected-environments">Affected environments</h3>
+          <p>The following environments are susceptible to an XSS attack:</p>
+          <ul>
+          <li>Web servers</li>
+          <li>Application servers</li>
+          <li>Web application environments</li>
+          </ul>
+          <h2 id="best-practices-for-prevention">Best practices for prevention</h2>
+          <p>This section describes the top best practices designed to specifically protect your code:</p>
+          <ul>
+          <li>Sanitize data input in an HTTP request before reflecting it back, ensuring all data is validated, filtered or escaped before echoing anything back to the user, such as the values of query parameters during searches.</li>
+          <li>Convert special characters such as <code>?</code>, <code>&amp;</code>, <code>/</code>, <code>&lt;</code>, <code>&gt;</code> and spaces to their respective HTML or URL encoded equivalents.</li>
+          <li>Give users the option to disable client-side scripts.</li>
+          <li>Redirect invalid requests.</li>
+          <li>Detect simultaneous logins, including those from two separate IP addresses, and invalidate those sessions.</li>
+          <li>Use and enforce a Content Security Policy (source: Wikipedia) to disable any features that might be manipulated for an XSS attack.</li>
+          <li>Read the documentation for any of the libraries referenced in your code to understand which elements allow for embedded HTML.</li>
+          </ul>
+          </div>
+                  </div>
+              </div>
+          </div>
+          <div class="card card--vuln  disclosure--not-new severity--medium" data-snyk-test="medium">
+              <input type="radio" name="tab-view-6" id="tab-dataflow-6" value="dataflow" class="card__tab__radio" checked>
+              <input type="radio" name="tab-view-6" id="tab-fix-6" value="fix" class="card__tab__radio" >
+          
+              <header class="card__header">
+                  <div class="card__header__main">
+                      <div class="severity-icon severity-icon--medium"></div>
+                      <h2 class="card__title">Cross-site Scripting (XSS)</h2>
+                      <div class="card__actions">
+                          <label for="tab-dataflow-6" class="card__action">Data Flow</label>
+                          <label for="tab-fix-6" class="card__action">Fix Analysis</label>
+                      </div>
+                  </div>
+                  <ul class="card__meta">
+                      <li class="card__meta__item">SNYK-CODE</li>
+                      <li class="card__meta__item">CWE-79</li>
+                      <li class="card__meta__item">DOMXSS</li>
+                  </ul>
+              </header>
+              <div class="card__section">
+                  <div class="card__summary severity--medium">
+                      <p>Unsanitized input from a React useState value flows into a React dynamic &#x27;href&#x27; attribute, where it is used to dynamically construct the HTML page on client side. This may result in a DOM Based Cross-Site Scripting attack (DOMXSS).</p>
+                      <div class="file-location">Found in: <strong>soc-ar-client/src/pages/Resources.jsx (line : 313)</strong></div>    
+                  </div>
+                  <div class="card__panel dataflow">
+                      <h2 class="card__panel__heading"><span class="heading-char">⇣</span> Data Flow</h2>
+                      <div class="dataflow__filename"> soc-ar-client/src/pages/Resources.jsx</div>
+                      <div class="dataflow__item">
+                          <span class="dataflow__lineno" title="line:column">20:10</span>
+                          <div class="dataflow__code"><span class="dataflow__codeprefix">  const [<br /></span><span class="marker">resources,</span><span class="dataflow__codesuffix"> setResources] &#x3D; useState([]);</span></div>
+                          <span class="dataflow__badge" title="Data is 'tainted' if it comes from an insecure source such as a file, the network, or the user. This tainted data is passed to a sensitive sink, as described below.">Source</span>
+                          <span class="dataflow__step">0</span>
+                      </div>
+                      
+                      <div class="dataflow__item">
+                          <span class="dataflow__lineno" title="line:column">293:37</span>
+                          <div class="dataflow__code"><span class="dataflow__codeprefix">                    {resources.map((<br /></span><span class="marker">resource)</span><span class="dataflow__codesuffix"> &#x3D;&gt; (</span></div>
+                          
+                          <span class="dataflow__step">1</span>
+                      </div>
+                      
+                      <div class="dataflow__item">
+                          <span class="dataflow__lineno" title="line:column">313:37</span>
+                          <div class="dataflow__code"><span class="dataflow__codeprefix">                              href&#x3D;{<br /></span><span class="marker">resource.</span><span class="dataflow__codesuffix">url}</span></div>
+                          
+                          <span class="dataflow__step">2</span>
+                      </div>
+                      
+                      <div class="dataflow__item">
+                          <span class="dataflow__lineno" title="line:column">313:46</span>
+                          <div class="dataflow__code"><span class="dataflow__codeprefix">                              href&#x3D;{resource.<br /></span><span class="marker">url}</span><span class="dataflow__codesuffix"></span></div>
+                          
+                          <span class="dataflow__step">3</span>
+                      </div>
+                      
+                      <div class="dataflow__item">
+                          <span class="dataflow__lineno" title="line:column">313:37</span>
+                          <div class="dataflow__code"><span class="dataflow__codeprefix">                              href&#x3D;{<br /></span><span class="marker">resource.url}</span><span class="dataflow__codesuffix"></span></div>
+                          
+                          <span class="dataflow__step">4</span>
+                      </div>
+                      
+                      <div class="dataflow__item">
+                          <span class="dataflow__lineno" title="line:column">313:36</span>
+                          <div class="dataflow__code"><span class="dataflow__codeprefix">                              href&#x3D;<br /></span><span class="marker">{resource.url}</span><span class="dataflow__codesuffix"></span></div>
+                          <span class="dataflow__badge" title="Sinks are the operations that must receive clean data and that you wouldn't want an attacker to be able to manipulate.">Sink</span>
+                          <span class="dataflow__step">5</span>
+                      </div>
+                  </div>
+                  <div class="card__panel fix-analysis">
+                      <h2 class="card__panel__heading"><span class="heading-char">✓</span> Fix Analysis</h2>
+                      <div class="card__panel__markdown"><h2 id="details">Details</h2>
+          <p>A cross-site scripting attack occurs when the attacker tricks a legitimate web-based application or site to accept a request as originating from a trusted source.</p>
+          <p>This is done by escaping the context of the web application; the web application then delivers that data to its users along with other trusted dynamic content, without validating it. The browser unknowingly executes malicious script on the client side (through client-side languages; usually JavaScript or HTML)  in order to perform actions that are otherwise typically blocked by the browser&#39;s Same Origin Policy.</p>
+          <p>Injecting malicious code is the most prevalent manner by which XSS is exploited; for this reason, escaping characters in order to prevent this manipulation is the top method for securing code against this vulnerability.</p>
+          <p>Escaping means that the application is coded to mark key characters, and particularly key characters included in user input, to prevent those characters from being interpreted in a dangerous context. For example, in HTML, <code>&lt;</code> can be coded as  <code>&amp;lt</code>; and <code>&gt;</code> can be coded as <code>&amp;gt</code>; in order to be interpreted and displayed as themselves in text, while within the code itself, they are used for HTML tags. If malicious content is injected into an application that escapes special characters and that malicious content uses <code>&lt;</code> and <code>&gt;</code> as HTML tags, those characters are nonetheless not interpreted as HTML tags by the browser if they&#39;ve been correctly escaped in the application code and in this way the attempted attack is diverted.</p>
+          <p>The most prominent use of XSS is to steal cookies (source: OWASP HttpOnly) and hijack user sessions, but XSS exploits have been used to expose sensitive information, enable access to privileged services and functionality and deliver malware.</p>
+          <h3 id="types-of-attacks">Types of attacks</h3>
+          <p>There are a few methods by which XSS can be manipulated:</p>
+          <table>
+          <thead>
+          <tr>
+          <th>Type</th>
+          <th>Origin</th>
+          <th>Description</th>
+          </tr>
+          </thead>
+          <tbody><tr>
+          <td><strong>Stored</strong></td>
+          <td>Server</td>
+          <td>The malicious code is inserted in the application (usually as a link) by the attacker. The code is activated every time a user clicks the link.</td>
+          </tr>
+          <tr>
+          <td><strong>Reflected</strong></td>
+          <td>Server</td>
+          <td>The attacker delivers a malicious link externally from the vulnerable web site application to a user. When clicked, malicious code is sent to the vulnerable web site, which reflects the attack back to the user&#39;s browser.</td>
+          </tr>
+          <tr>
+          <td><strong>DOM-based</strong></td>
+          <td>Client</td>
+          <td>The attacker forces the user&#39;s browser to render a malicious page. The data in the page itself delivers the cross-site scripting data.</td>
+          </tr>
+          <tr>
+          <td><strong>Mutated</strong></td>
+          <td></td>
+          <td>The attacker injects code that appears safe, but is then rewritten and modified by the browser, while parsing the markup. An example is rebalancing unclosed quotation marks or even adding quotation marks to unquoted parameters.</td>
+          </tr>
+          </tbody></table>
+          <h3 id="affected-environments">Affected environments</h3>
+          <p>The following environments are susceptible to an XSS attack:</p>
+          <ul>
+          <li>Web servers</li>
+          <li>Application servers</li>
+          <li>Web application environments</li>
+          </ul>
+          <h2 id="best-practices-for-prevention">Best practices for prevention</h2>
+          <p>This section describes the top best practices designed to specifically protect your code:</p>
+          <ul>
+          <li>Sanitize data input in an HTTP request before reflecting it back, ensuring all data is validated, filtered or escaped before echoing anything back to the user, such as the values of query parameters during searches.</li>
+          <li>Convert special characters such as <code>?</code>, <code>&amp;</code>, <code>/</code>, <code>&lt;</code>, <code>&gt;</code> and spaces to their respective HTML or URL encoded equivalents.</li>
+          <li>Give users the option to disable client-side scripts.</li>
+          <li>Redirect invalid requests.</li>
+          <li>Detect simultaneous logins, including those from two separate IP addresses, and invalidate those sessions.</li>
+          <li>Use and enforce a Content Security Policy (source: Wikipedia) to disable any features that might be manipulated for an XSS attack.</li>
+          <li>Read the documentation for any of the libraries referenced in your code to understand which elements allow for embedded HTML.</li>
+          </ul>
+          </div>
+                  </div>
+              </div>
+          </div>
+          <div class="card card--vuln  disclosure--not-new severity--medium" data-snyk-test="medium">
+              <input type="radio" name="tab-view-7" id="tab-dataflow-7" value="dataflow" class="card__tab__radio" checked>
+              <input type="radio" name="tab-view-7" id="tab-fix-7" value="fix" class="card__tab__radio" >
+          
+              <header class="card__header">
+                  <div class="card__header__main">
+                      <div class="severity-icon severity-icon--medium"></div>
+                      <h2 class="card__title">Information Exposure</h2>
+                      <div class="card__actions">
+                          <label for="tab-dataflow-7" class="card__action">Data Flow</label>
+                          <label for="tab-fix-7" class="card__action">Fix Analysis</label>
                       </div>
                   </div>
                   <ul class="card__meta">
@@ -972,13 +1485,13 @@
               <div class="card__section">
                   <div class="card__summary severity--medium">
                       <p>Disable X-Powered-By header for your Express app (consider using Helmet middleware), because it exposes information about the used framework to potential attackers.</p>
-                      <div class="file-location">Found in: <strong>backend/server.js (line : 16)</strong></div>    
+                      <div class="file-location">Found in: <strong>backend/server.js (line : 18)</strong></div>    
                   </div>
                   <div class="card__panel dataflow">
                       <h2 class="card__panel__heading"><span class="heading-char">⇣</span> Data Flow</h2>
                       <div class="dataflow__filename"> backend/server.js</div>
                       <div class="dataflow__item">
-                          <span class="dataflow__lineno" title="line:column">16:13</span>
+                          <span class="dataflow__lineno" title="line:column">18:13</span>
                           <div class="dataflow__code"><span class="dataflow__codeprefix">const app &#x3D; <br /></span><span class="marker">express(</span><span class="dataflow__codesuffix">);</span></div>
                           <span class="dataflow__badge" title="Data is 'tainted' if it comes from an insecure source such as a file, the network, or the user. This tainted data is passed to a sensitive sink, as described below.">Source</span><span class="dataflow__badge" title="Sinks are the operations that must receive clean data and that you wouldn't want an attacker to be able to manipulate.">Sink</span>
                           <span class="dataflow__step">0</span>
@@ -1004,16 +1517,16 @@
               </div>
           </div>
           <div class="card card--vuln  disclosure--not-new severity--low" data-snyk-test="low">
-              <input type="radio" name="tab-view-4" id="tab-dataflow-4" value="dataflow" class="card__tab__radio" checked>
-              <input type="radio" name="tab-view-4" id="tab-fix-4" value="fix" class="card__tab__radio" >
+              <input type="radio" name="tab-view-8" id="tab-dataflow-8" value="dataflow" class="card__tab__radio" checked>
+              <input type="radio" name="tab-view-8" id="tab-fix-8" value="fix" class="card__tab__radio" >
           
               <header class="card__header">
                   <div class="card__header__main">
                       <div class="severity-icon severity-icon--low"></div>
                       <h2 class="card__title">Improper Type Validation</h2>
                       <div class="card__actions">
-                          <label for="tab-dataflow-4" class="card__action">Data Flow</label>
-                          <label for="tab-fix-4" class="card__action">Fix Analysis</label>
+                          <label for="tab-dataflow-8" class="card__action">Data Flow</label>
+                          <label for="tab-fix-8" class="card__action">Fix Analysis</label>
                       </div>
                   </div>
                   <ul class="card__meta">
@@ -1092,16 +1605,16 @@
               </div>
           </div>
           <div class="card card--vuln  disclosure--not-new severity--low" data-snyk-test="low">
-              <input type="radio" name="tab-view-5" id="tab-dataflow-5" value="dataflow" class="card__tab__radio" checked>
-              <input type="radio" name="tab-view-5" id="tab-fix-5" value="fix" class="card__tab__radio" >
+              <input type="radio" name="tab-view-9" id="tab-dataflow-9" value="dataflow" class="card__tab__radio" checked>
+              <input type="radio" name="tab-view-9" id="tab-fix-9" value="fix" class="card__tab__radio" >
           
               <header class="card__header">
                   <div class="card__header__main">
                       <div class="severity-icon severity-icon--low"></div>
                       <h2 class="card__title">Improper Type Validation</h2>
                       <div class="card__actions">
-                          <label for="tab-dataflow-5" class="card__action">Data Flow</label>
-                          <label for="tab-fix-5" class="card__action">Fix Analysis</label>
+                          <label for="tab-dataflow-9" class="card__action">Data Flow</label>
+                          <label for="tab-fix-9" class="card__action">Fix Analysis</label>
                       </div>
                   </div>
                   <ul class="card__meta">
@@ -1180,16 +1693,16 @@
               </div>
           </div>
           <div class="card card--vuln  disclosure--not-new severity--low" data-snyk-test="low">
-              <input type="radio" name="tab-view-6" id="tab-dataflow-6" value="dataflow" class="card__tab__radio" checked>
-              <input type="radio" name="tab-view-6" id="tab-fix-6" value="fix" class="card__tab__radio" >
+              <input type="radio" name="tab-view-10" id="tab-dataflow-10" value="dataflow" class="card__tab__radio" checked>
+              <input type="radio" name="tab-view-10" id="tab-fix-10" value="fix" class="card__tab__radio" >
           
               <header class="card__header">
                   <div class="card__header__main">
                       <div class="severity-icon severity-icon--low"></div>
                       <h2 class="card__title">Improper Type Validation</h2>
                       <div class="card__actions">
-                          <label for="tab-dataflow-6" class="card__action">Data Flow</label>
-                          <label for="tab-fix-6" class="card__action">Fix Analysis</label>
+                          <label for="tab-dataflow-10" class="card__action">Data Flow</label>
+                          <label for="tab-fix-10" class="card__action">Fix Analysis</label>
                       </div>
                   </div>
                   <ul class="card__meta">
@@ -1268,16 +1781,16 @@
               </div>
           </div>
           <div class="card card--vuln  disclosure--not-new severity--low" data-snyk-test="low">
-              <input type="radio" name="tab-view-7" id="tab-dataflow-7" value="dataflow" class="card__tab__radio" checked>
-              <input type="radio" name="tab-view-7" id="tab-fix-7" value="fix" class="card__tab__radio" >
+              <input type="radio" name="tab-view-11" id="tab-dataflow-11" value="dataflow" class="card__tab__radio" checked>
+              <input type="radio" name="tab-view-11" id="tab-fix-11" value="fix" class="card__tab__radio" >
           
               <header class="card__header">
                   <div class="card__header__main">
                       <div class="severity-icon severity-icon--low"></div>
                       <h2 class="card__title">Improper Type Validation</h2>
                       <div class="card__actions">
-                          <label for="tab-dataflow-7" class="card__action">Data Flow</label>
-                          <label for="tab-fix-7" class="card__action">Fix Analysis</label>
+                          <label for="tab-dataflow-11" class="card__action">Data Flow</label>
+                          <label for="tab-fix-11" class="card__action">Fix Analysis</label>
                       </div>
                   </div>
                   <ul class="card__meta">
@@ -1356,16 +1869,16 @@
               </div>
           </div>
           <div class="card card--vuln  disclosure--not-new severity--low" data-snyk-test="low">
-              <input type="radio" name="tab-view-8" id="tab-dataflow-8" value="dataflow" class="card__tab__radio" checked>
-              <input type="radio" name="tab-view-8" id="tab-fix-8" value="fix" class="card__tab__radio" >
+              <input type="radio" name="tab-view-12" id="tab-dataflow-12" value="dataflow" class="card__tab__radio" checked>
+              <input type="radio" name="tab-view-12" id="tab-fix-12" value="fix" class="card__tab__radio" >
           
               <header class="card__header">
                   <div class="card__header__main">
                       <div class="severity-icon severity-icon--low"></div>
                       <h2 class="card__title">Improper Type Validation</h2>
                       <div class="card__actions">
-                          <label for="tab-dataflow-8" class="card__action">Data Flow</label>
-                          <label for="tab-fix-8" class="card__action">Fix Analysis</label>
+                          <label for="tab-dataflow-12" class="card__action">Data Flow</label>
+                          <label for="tab-fix-12" class="card__action">Fix Analysis</label>
                       </div>
                   </div>
                   <ul class="card__meta">

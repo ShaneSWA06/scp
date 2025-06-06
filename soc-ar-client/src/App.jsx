@@ -8,6 +8,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Quiz from "./pages/Quiz";
 import Badges from "./pages/Badges";
+import ResourcesPage from "./pages/Resources";
 
 function App() {
   const [particles, setParticles] = useState([]);
@@ -48,6 +49,14 @@ function App() {
             element={
               <AuthGuard>
                 <Badges />
+              </AuthGuard>
+            }
+          />
+          <Route
+            path="/resources"
+            element={
+              <AuthGuard>
+                <ResourcesPage />
               </AuthGuard>
             }
           />

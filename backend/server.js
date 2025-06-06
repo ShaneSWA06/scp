@@ -10,6 +10,8 @@ const milestoneRoutes = require("./routes/milestoneRoutes");
 const quizRoutes = require("./routes/quizRoutes");
 const badgeRoutes = require("./routes/badgeRoutes");
 const adminRoutes = require("./routes/adminRoutes");
+const resourceRoutes = require("./routes/resourceRoutes");
+const { r } = require("tar");
 
 dotenv.config();
 
@@ -43,6 +45,7 @@ app.use("/milestones", milestoneRoutes);
 app.use("/quizzes", quizRoutes);
 app.use("/badges", badgeRoutes);
 app.use("/admin", adminRoutes);
+app.use("/resources", resourceRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

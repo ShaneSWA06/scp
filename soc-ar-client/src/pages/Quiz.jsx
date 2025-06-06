@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, userLocation } from "react-router-dom";
 import axios from "axios";
 import DOMPurify from "dompurify";
 import "./Features.css";
@@ -212,6 +212,20 @@ const Quiz = () => {
         if (!completedQuizzes.includes(currentQuiz.id)) {
           setCompletedQuizzes([...completedQuizzes, currentQuiz.id]);
         }
+      } else {
+        // NEW: Navigate to resources page for wrong answers
+        setTimeout(() => {
+          navigate("/resources", {
+            state: {
+              milestone: {
+                ...currentQuiz,
+                selectedAnswer: selectedAnswer,
+                correctAnswer: currentQuiz.correctAnswer,
+                explanation: currentQuiz.explanation,
+              },
+            },
+          });
+        }, 3000); // Show result for 3 seconds, then redirect
       }
 
       // Refresh user stats and check for badges

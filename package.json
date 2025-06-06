@@ -455,6 +455,8 @@
     "init_tables": "node backend/config/db.js",
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "setup-db": "node backend/config/database.js",
+    "reset-db": "node backend/config/database.js",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

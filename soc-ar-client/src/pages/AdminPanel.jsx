@@ -59,6 +59,19 @@ function AdminPanel() {
 
   const [editingId, setEditingId] = useState(null);
 
+  const [resources, setResources] = useState([]);
+  const [resourceForm, setResourceForm] = useState({
+    milestone_id: "",
+    resource_type: "article",
+    title: "",
+    description: "",
+    url: "",
+    content: "",
+    display_order: 0,
+    is_active: true,
+  });
+  const [editingResourceId, setEditingResourceId] = useState(null);
+
   const token = localStorage.getItem("token");
 
   // 🔐 SECURITY: Comprehensive authentication and authorization check
@@ -143,10 +156,12 @@ function AdminPanel() {
     try {
       const config = {
         headers: { Authorization: `Bearer ${token}` },
-        timeout: 10000, // 10 second timeout
+        timeout: 10000,
       };
 
-      // Load milestones and quizzes in parallel
+      console.log("🔄 Loading admin data...");
+
+      // Load milestones and quizzes (essential data)
       const [milestonesResponse, quizzesResponse] = await Promise.all([
         axios.get("http://localhost:5000/milestones", config),
         axios.get("http://localhost:5000/quizzes", config),
@@ -154,16 +169,124 @@ function AdminPanel() {
 
       setMilestones(milestonesResponse.data);
       setQuizzes(quizzesResponse.data);
+
+      console.log("✅ Loaded milestones:", milestonesResponse.data.length);
+      console.log("✅ Loaded quizzes:", quizzesResponse.data.length);
+
+      // Try to load resources (optional - may not exist yet)
+      try {
+        const resourcesResponse = await axios.get(
+          "http://localhost:5000/resources/admin/all",
+          config
+        );
+        setResources(resourcesResponse.data);
+        console.log("✅ Loaded resources:", resourcesResponse.data.length);
+      } catch (resourceError) {
+        console.log(
+          "⚠️ Resources endpoint not available yet - setting empty array"
+        );
+        setResources([]); // Set empty array if resources endpoint doesn't exist
+      }
     } catch (error) {
-      console.error("Error loading admin data:", error);
+      console.error("❌ Error loading admin data:", error);
 
       if (error.response?.status === 401 || error.response?.status === 403) {
         alert("Session expired or access denied. Please login again.");
         localStorage.removeItem("token");
         navigate("/login");
       } else {
-        alert("Error loading data. Please refresh the page.");
+        // More specific error message
+        const errorMsg =
+          error.response?.data?.error || error.message || "Unknown error";
+        console.error("Detailed error:", errorMsg);
+        alert(
+          `Error loading data: ${errorMsg}. Please check the console for details.`
+        );
       }
+    }
+  };
+
+  const handleResourceSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      await secureApiRequest(async (config) => {
+        if (editingResourceId) {
+          await axios.put(
+            `http://localhost:5000/resources/${editingResourceId}`,
+            resourceForm,
+            config
+          );
+        } else {
+          await axios.post(
+            "http://localhost:5000/resources",
+            resourceForm,
+            config
+          );
+        }
+      });
+
+      // Reset form and reload data
+      setResourceForm({
+        milestone_id: "",
+        resource_type: "article",
+        title: "",
+        description: "",
+        url: "",
+        content: "",
+        display_order: 0,
+        is_active: true,
+      });
+      setEditingResourceId(null);
+      await loadAdminData();
+    } catch (error) {
+      // Error handled in secureApiRequest
+    }
+  };
+
+  const handleResourceEdit = (resource) => {
+    setResourceForm({
+      milestone_id: resource.milestone_id,
+      resource_type: resource.resource_type,
+      title: resource.title,
+      description: resource.description || "",
+      url: resource.url || "",
+      content: resource.content || "",
+      display_order: resource.display_order,
+      is_active: resource.is_active,
+    });
+    setEditingResourceId(resource.id);
+  };
+
+  const handleResourceDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this resource?")) {
+      return;
+    }
+
+    try {
+      await secureApiRequest(async (config) => {
+        await axios.delete(`http://localhost:5000/resources/${id}`, config);
+      });
+      await loadAdminData();
+    } catch (error) {
+      // Error handled in secureApiRequest
+      console.error("Resource delete error:", error);
+    }
+  };
+
+  const toggleResourceStatus = async (id) => {
+    try {
+      await secureApiRequest(async (config) => {
+        await axios.patch(
+          `http://localhost:5000/resources/${id}/toggle`,
+          {},
+          config
+        );
+      });
+      await loadAdminData();
+    } catch (error) {
+      // Error handled in secureApiRequest
+      console.error("Resource toggle error:", error);
     }
   };
 
@@ -408,6 +531,16 @@ function AdminPanel() {
               }`}
             >
               🧠 Manage Quizzes
+            </button>
+            <button
+              onClick={() => setActiveTab("resources")}
+              className={`px-6 py-3 rounded-lg font-semibold transition-all ${
+                activeTab === "resources"
+                  ? "bg-cyan-600 text-white"
+                  : "bg-white/10 text-gray-300 hover:bg-white/20"
+              }`}
+            >
+              📚 Manage Resources
             </button>
           </div>
         </div>
@@ -782,6 +915,305 @@ function AdminPanel() {
                     </div>
                   </div>
                 ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === "resources" && (
+          <div className="space-y-8">
+            {/* Resource Form */}
+            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20">
+              <h2 className="text-2xl font-bold text-white mb-6">
+                {editingResourceId
+                  ? "Edit Resource"
+                  : "Add New Learning Resource"}
+              </h2>
+
+              <form onSubmit={handleResourceSubmit} className="space-y-4">
+                {/* Milestone Selection */}
+                <select
+                  className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                  value={resourceForm.milestone_id}
+                  onChange={(e) =>
+                    setResourceForm({
+                      ...resourceForm,
+                      milestone_id: e.target.value,
+                    })
+                  }
+                  required
+                >
+                  <option value="" className="bg-gray-800">
+                    Select Milestone
+                  </option>
+                  {milestones.map((milestone) => (
+                    <option
+                      key={milestone.id}
+                      value={milestone.id}
+                      className="bg-gray-800"
+                    >
+                      {milestone.title} ({milestone.year})
+                    </option>
+                  ))}
+                </select>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Resource Type */}
+                  <select
+                    className="bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                    value={resourceForm.resource_type}
+                    onChange={(e) =>
+                      setResourceForm({
+                        ...resourceForm,
+                        resource_type: e.target.value,
+                      })
+                    }
+                    required
+                  >
+                    <option value="article" className="bg-gray-800">
+                      📖 Article
+                    </option>
+                    <option value="video" className="bg-gray-800">
+                      🎥 Video
+                    </option>
+                    <option value="document" className="bg-gray-800">
+                      📄 Document
+                    </option>
+                    <option value="link" className="bg-gray-800">
+                      🔗 External Link
+                    </option>
+                    <option value="text" className="bg-gray-800">
+                      📝 Text Content
+                    </option>
+                  </select>
+
+                  {/* Display Order */}
+                  <input
+                    type="number"
+                    className="bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                    placeholder="Display Order (0-100)"
+                    value={resourceForm.display_order}
+                    onChange={(e) =>
+                      setResourceForm({
+                        ...resourceForm,
+                        display_order: parseInt(e.target.value) || 0,
+                      })
+                    }
+                    min="0"
+                    max="100"
+                  />
+                </div>
+
+                {/* Title */}
+                <input
+                  className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                  placeholder="Resource Title"
+                  value={resourceForm.title}
+                  onChange={(e) =>
+                    setResourceForm({ ...resourceForm, title: e.target.value })
+                  }
+                  required
+                />
+
+                {/* Description */}
+                <textarea
+                  className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                  placeholder="Resource Description"
+                  rows="3"
+                  value={resourceForm.description}
+                  onChange={(e) =>
+                    setResourceForm({
+                      ...resourceForm,
+                      description: e.target.value,
+                    })
+                  }
+                />
+
+                {/* URL (conditional) */}
+                {resourceForm.resource_type !== "text" && (
+                  <input
+                    type="url"
+                    className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                    placeholder="Resource URL (https://...)"
+                    value={resourceForm.url}
+                    onChange={(e) =>
+                      setResourceForm({ ...resourceForm, url: e.target.value })
+                    }
+                  />
+                )}
+
+                {/* Text Content (conditional) */}
+                {resourceForm.resource_type === "text" && (
+                  <textarea
+                    className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                    placeholder="Text Content"
+                    rows="6"
+                    value={resourceForm.content}
+                    onChange={(e) =>
+                      setResourceForm({
+                        ...resourceForm,
+                        content: e.target.value,
+                      })
+                    }
+                  />
+                )}
+
+                {/* Active Status */}
+                <div className="flex items-center gap-3">
+                  <input
+                    type="checkbox"
+                    id="resource-active"
+                    checked={resourceForm.is_active}
+                    onChange={(e) =>
+                      setResourceForm({
+                        ...resourceForm,
+                        is_active: e.target.checked,
+                      })
+                    }
+                    className="w-4 h-4 rounded"
+                  />
+                  <label htmlFor="resource-active" className="text-white">
+                    Active (visible to students)
+                  </label>
+                </div>
+
+                <div className="flex gap-4">
+                  <button
+                    type="submit"
+                    className="bg-gradient-to-r from-green-500 to-blue-600 text-white px-8 py-3 rounded-xl font-semibold hover:from-green-600 hover:to-blue-700 transition-all"
+                  >
+                    {editingResourceId ? "Update Resource" : "Add Resource"}
+                  </button>
+
+                  {editingResourceId && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setEditingResourceId(null);
+                        setResourceForm({
+                          milestone_id: "",
+                          resource_type: "article",
+                          title: "",
+                          description: "",
+                          url: "",
+                          content: "",
+                          display_order: 0,
+                          is_active: true,
+                        });
+                      }}
+                      className="bg-gray-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-gray-700 transition-all"
+                    >
+                      Cancel
+                    </button>
+                  )}
+                </div>
+              </form>
+            </div>
+
+            {/* Resources List */}
+            <div className="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 overflow-hidden">
+              <div className="p-6 border-b border-white/20">
+                <h3 className="text-xl font-bold text-white">
+                  Learning Resources ({resources.length})
+                </h3>
+              </div>
+
+              <div className="space-y-4 p-6">
+                {resources.map((resource) => (
+                  <div
+                    key={resource.id}
+                    className={`bg-white/5 rounded-xl p-4 border border-white/10 ${
+                      !resource.is_active ? "opacity-60" : ""
+                    }`}
+                  >
+                    <div className="flex justify-between items-start mb-2">
+                      <div className="flex items-center gap-2">
+                        <span className="text-2xl">
+                          {resource.resource_type === "article" && "📖"}
+                          {resource.resource_type === "video" && "🎥"}
+                          {resource.resource_type === "document" && "📄"}
+                          {resource.resource_type === "link" && "🔗"}
+                          {resource.resource_type === "text" && "📝"}
+                        </span>
+                        <span className="text-cyan-400 font-semibold text-sm">
+                          {resource.milestone_title} ({resource.milestone_year})
+                        </span>
+                        {!resource.is_active && (
+                          <span className="bg-red-500/20 text-red-400 px-2 py-1 rounded text-xs">
+                            Inactive
+                          </span>
+                        )}
+                      </div>
+                      <span className="text-gray-400 text-sm">
+                        Order: {resource.display_order}
+                      </span>
+                    </div>
+
+                    <h4 className="text-white font-medium mb-2">
+                      {resource.title}
+                    </h4>
+
+                    {resource.description && (
+                      <p className="text-gray-300 text-sm mb-2">
+                        {resource.description}
+                      </p>
+                    )}
+
+                    {resource.url && (
+                      <a
+                        href={resource.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-400 text-sm hover:underline block mb-2"
+                      >
+                        🔗 {resource.url}
+                      </a>
+                    )}
+
+                    {resource.content && (
+                      <div className="bg-white/5 rounded p-3 mb-2">
+                        <p className="text-gray-300 text-sm">
+                          {resource.content.substring(0, 200)}
+                          {resource.content.length > 200 && "..."}
+                        </p>
+                      </div>
+                    )}
+
+                    <div className="flex gap-2 mt-3">
+                      <button
+                        onClick={() => handleResourceEdit(resource)}
+                        className="bg-yellow-600 text-white px-3 py-1 rounded-lg text-sm font-medium hover:bg-yellow-700 transition-colors"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => toggleResourceStatus(resource.id)}
+                        className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
+                          resource.is_active
+                            ? "bg-orange-600 hover:bg-orange-700 text-white"
+                            : "bg-green-600 hover:bg-green-700 text-white"
+                        }`}
+                      >
+                        {resource.is_active ? "Deactivate" : "Activate"}
+                      </button>
+                      <button
+                        onClick={() => handleResourceDelete(resource.id)}
+                        className="bg-red-600 text-white px-3 py-1 rounded-lg text-sm font-medium hover:bg-red-700 transition-colors"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                ))}
+
+                {resources.length === 0 && (
+                  <div className="text-center text-gray-400 py-8">
+                    <p>No learning resources created yet.</p>
+                    <p className="text-sm">
+                      Add your first resource using the form above.
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           </div>

@@ -408,7 +408,7 @@
     "terminal-link": "^2.1.1",
     "text-table": "^0.2.0",
     "through": "^2.3.8",
-    "tmp": "^0.2.2",
+    "tmp": "^0.2.4",
     "to-regex-range": "^5.0.1",
     "toidentifier": "^1.0.1",
     "touch": "^3.1.0",
